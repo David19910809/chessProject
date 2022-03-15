@@ -31,9 +31,11 @@ import numpy as np
 #棋盘位置信息
 #[(x,y),(x1,y1),,,,]
 class IPiece:
-    def __init__(self,side,pieceId):
+    def __init__(self,side,pieceId,isDead,value):
         self.side = side
         self.pieceId = pieceId
+        self.isDead = isDead
+        self.value = value
 
 
 class ICross:
@@ -47,4 +49,5 @@ class ICross:
 
 
 class IBoard:
-
+    def __init__(self):
+        self.cross1 = new ICross(1,0,9,10)
