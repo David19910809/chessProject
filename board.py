@@ -28,7 +28,7 @@ import numpy as np
 #1,1,1,1,1,1,1,1,1
 #1,1,1,1,1,1,1,1,1
 
-#棋盘位置信息
+#棋盘位置信息,对称性
 #[(x,y),(x1,y1),,,,]
 class IPiece:
     def __init__(self,side,pieceId,isDead,value,name):
@@ -165,18 +165,39 @@ class IBoard:
     def getAllAction(self):
         #遍历所有子力位置的交叉点，得到所有的行动子集。
         #print('nihao')
-        for crosse in self.crosses:
-        # for crosse in self.crosses:
-        #     if(crosse.rx%9 ==0):
-        #         if (crosse.piece != None):
-        #             print(crosse.piece.name)
+        for cross in self.crosses:
+        # for cross in self.crosses:
+        #     if(cross.rx%9 ==0):
+        #         if (cross.piece != None):
+        #             print(cross.piece.name)
         #         else:
         #             print("——")
         #     else:
-        #         if (crosse.piece != None):
-        #             print(crosse.piece.name,end="")
+        #         if (cross.piece != None):
+        #             print(cross.piece.name,end="")
         #         else:
         #             print("——",end="")
+    # 工具方法，根据坐标返回相应的交叉点
+    def getCrossByCoordinate(self,x,y,side):
+        if side == 'b':
+            for cross in self.crosses:
+                if x == cross.bx and y == cross.by:
+                    return cross
+        if side == 'r':
+            for cross in self.crosses:
+                if x == cross.rx and y == cross.ry:
+                    return cross
+    #返回每个棋子的可达交叉点，即控制交叉点
+    def getPieceControl(self,cross):
+        # 车的走法
+        controlList = []
+        if cross.piece.pieceId == 1:
+            rx = cross.piece.rx
+            ry = cross.piece.ry
+
+            else:
+
+
 
 if __name__ == '__main__':
     myboard = IBoard()
