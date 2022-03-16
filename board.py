@@ -108,7 +108,7 @@ class IBoard:
         self.cross55 = ICross(1, 6, 9, 3, IPiece('b', 1, 'n', 9, '兵'),1)
         self.cross56 = ICross(2, 6, 8, 3, None,1)
         self.cross57 = ICross(3, 6, 7, 3, IPiece('b', 1, 'n', 9, '兵'),1)
-        self.cross58 = ICross(4, 6, 6, 3, None)
+        self.cross58 = ICross(4, 6, 6, 3, None,1)
         self.cross59 = ICross(5, 6, 5, 3, IPiece('b', 1, 'n', 9, '兵'),1)
         self.cross60 = ICross(6, 6, 4, 3, None,1)
         self.cross61 = ICross(7, 6, 3, 3, IPiece('b', 1, 'n', 9, '兵'),1)
@@ -162,6 +162,23 @@ class IBoard:
                         self.cross89, self.cross90
                         ]
 
-    def __getAllAction__(self):
-        #遍历有子力位置的交叉点，得到所有的行动子集,
+    def getAllAction(self):
+        #遍历所有子力位置的交叉点，得到所有的行动子集。
+        #print('nihao')
+        for crosse in self.crosses:
+        # for crosse in self.crosses:
+        #     if(crosse.rx%9 ==0):
+        #         if (crosse.piece != None):
+        #             print(crosse.piece.name)
+        #         else:
+        #             print("——")
+        #     else:
+        #         if (crosse.piece != None):
+        #             print(crosse.piece.name,end="")
+        #         else:
+        #             print("——",end="")
+
+if __name__ == '__main__':
+    myboard = IBoard()
+    myboard.getAllAction()
 
