@@ -162,10 +162,10 @@ class IBoard:
                         self.cross89, self.cross90
                         ]
 
-    def getAllAction(self):
+    #def getAllAction(self):
         #遍历所有子力位置的交叉点，得到所有的行动子集。
         #print('nihao')
-        for cross in self.crosses:
+        #for cross in self.crosses:
         # for cross in self.crosses:
         #     if(cross.rx%9 ==0):
         #         if (cross.piece != None):
@@ -188,18 +188,70 @@ class IBoard:
                 if x == cross.rx and y == cross.ry:
                     return cross
     #返回每个棋子的可达交叉点，即控制交叉点
-    def getPieceControl(self,cross):
+    def getRookControl(self,cross):
         # 车的走法
         controlList = []
-        if cross.piece.pieceId == 1:
-            rx = cross.piece.rx
-            ry = cross.piece.ry
 
-            else:
+        rx = cross.rx
+        ry = cross.ry
+        while ry < 9:
+            controlList.append(self.getCrossByCoordinate(rx,ry+1,'r'))
+            if self.getCrossByCoordinate(rx,ry+1,'r').piece != None or ry+1 ==9:
+                break
+            ry +=1
+        ry = cross.ry
+        while ry > 0:
+            controlList.append(self.getCrossByCoordinate(rx,ry-1,'r'))
+            if self.getCrossByCoordinate(rx,ry-1,'r').piece != None or ry-1 ==0:
+                break
+            ry -=1
+        ry = cross.ry
+        while rx > 1:
+            controlList.append(self.getCrossByCoordinate(rx-1,ry,'r'))
+            if self.getCrossByCoordinate(rx-1,ry,'r').piece != None or rx-1 ==1:
+                break
+            rx -=1
+        rx = cross.rx
+        while rx < 9:
+            controlList.append(self.getCrossByCoordinate(rx+1,ry,'r'))
+            if self.getCrossByCoordinate(rx+1,ry,'r').piece != None or rx+1 ==9:
+                break
+            rx +=1
+        return controlList
 
+        # 返回每个棋子的可达交叉点，即控制交叉点
+    def getRookAccess(self, cross):
+            controlList = []
 
-
+            rx = cross.rx
+            ry = cross.ry
+            while ry < 9:
+                if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None or ry + 1 == 9:
+                    break
+                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+                ry += 1
+            ry = cross.ry
+            while ry > 0:
+                if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None or ry - 1 == 0:
+                    break
+                controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
+                ry -= 1
+            ry = cross.ry
+            while rx > 1:
+                if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None or rx - 1 == 1:
+                    break
+                controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
+                rx -= 1
+            rx = cross.rx
+            while rx < 9:
+                if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None or rx + 1 == 9:
+                    break
+                controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
+                rx += 1
+            return controlList
 if __name__ == '__main__':
     myboard = IBoard()
-    myboard.getAllAction()
+    controlList = myboard.getRookAccess(myboard.getCrossByCoordinate(1,0,'r'))
+    print(controlList[0].rx,controlList[0].ry)
+    print(controlList[1].rx, controlList[1].ry)
 
