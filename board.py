@@ -187,6 +187,7 @@ class IBoard:
             for cross in self.crosses:
                 if x == cross.rx and y == cross.ry:
                     return cross
+        return None
     #返回每个棋子的可达交叉点，即控制交叉点
     def getRookControl(self,cross):
         # 车的走法
@@ -249,9 +250,33 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
                 rx += 1
             return controlList
+
+    def getKnightControl(self, cross):
+        # 马的走法
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        #马路及控制点
+        #(rx-1，ry)(rx，ry+1)(rx+1,ry)(rx,ry-1)
+        if self.getCrossByCoordinate(rx - 1, ry, 'r') != None and self.getCrossByCoordinate(rx - 1, ry, 'r').piece == None:
+            controlList.append(self.getCrossByCoordinate(rx - 2, ry + 1, 'r'))
+            controlList.append(self.getCrossByCoordinate(rx - 2, ry - 1, 'r'))
+        if self.getCrossByCoordinate(rx, ry + 1, 'r') != None and self.getCrossByCoordinate(rx, ry + 1, 'r').piece == None:
+            controlList.append(self.getCrossByCoordinate(rx + 1, ry + 2, 'r'))
+            controlList.append(self.getCrossByCoordinate(rx - 1, ry + 2, 'r'))
+        if self.getCrossByCoordinate(rx + 1, ry, 'r') != None and self.getCrossByCoordinate(rx + 1, ry, 'r').piece == None:
+            controlList.append(self.getCrossByCoordinate(rx + 2, ry + 1, 'r'))
+            controlList.append(self.getCrossByCoordinate(rx + 2, ry - 1, 'r'))
+        if self.getCrossByCoordinate(rx, ry - 1, 'r') != None and self.getCrossByCoordinate(rx, ry - 1, 'r').piece == None:
+            controlList.append(self.getCrossByCoordinate(rx + 1, ry - 2, 'r'))
+            controlList.append(self.getCrossByCoordinate(rx - 1, ry - 2, 'r'))
+        return controlList
 if __name__ == '__main__':
     myboard = IBoard()
-    controlList = myboard.getRookAccess(myboard.getCrossByCoordinate(1,0,'r'))
+    controlList = myboard.getRookAccess(myboard.getCrossByCoordinate(2,0,'r'))
     print(controlList[0].rx,controlList[0].ry)
     print(controlList[1].rx, controlList[1].ry)
+
+    print(controlList[3].rx, controlList[3].ry)
+    print(controlList[4].rx, controlList[4].ry)
 
