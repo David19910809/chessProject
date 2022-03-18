@@ -220,36 +220,7 @@ class IBoard:
             rx +=1
         return controlList
 
-        # 返回每个棋子的可达交叉点，即控制交叉点
-    def getRookAccess(self, cross):
-            controlList = []
 
-            rx = cross.rx
-            ry = cross.ry
-            while ry < 9:
-                if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None or ry + 1 == 9:
-                    break
-                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
-                ry += 1
-            ry = cross.ry
-            while ry > 0:
-                if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None or ry - 1 == 0:
-                    break
-                controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
-                ry -= 1
-            ry = cross.ry
-            while rx > 1:
-                if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None or rx - 1 == 1:
-                    break
-                controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
-                rx -= 1
-            rx = cross.rx
-            while rx < 9:
-                if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None or rx + 1 == 9:
-                    break
-                controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
-                rx += 1
-            return controlList
 
     def getKnightControl(self, cross):
         # 马的走法
@@ -261,22 +232,115 @@ class IBoard:
         if self.getCrossByCoordinate(rx - 1, ry, 'r') != None and self.getCrossByCoordinate(rx - 1, ry, 'r').piece == None:
             controlList.append(self.getCrossByCoordinate(rx - 2, ry + 1, 'r'))
             controlList.append(self.getCrossByCoordinate(rx - 2, ry - 1, 'r'))
+
         if self.getCrossByCoordinate(rx, ry + 1, 'r') != None and self.getCrossByCoordinate(rx, ry + 1, 'r').piece == None:
             controlList.append(self.getCrossByCoordinate(rx + 1, ry + 2, 'r'))
             controlList.append(self.getCrossByCoordinate(rx - 1, ry + 2, 'r'))
+
         if self.getCrossByCoordinate(rx + 1, ry, 'r') != None and self.getCrossByCoordinate(rx + 1, ry, 'r').piece == None:
             controlList.append(self.getCrossByCoordinate(rx + 2, ry + 1, 'r'))
             controlList.append(self.getCrossByCoordinate(rx + 2, ry - 1, 'r'))
+
         if self.getCrossByCoordinate(rx, ry - 1, 'r') != None and self.getCrossByCoordinate(rx, ry - 1, 'r').piece == None:
             controlList.append(self.getCrossByCoordinate(rx + 1, ry - 2, 'r'))
             controlList.append(self.getCrossByCoordinate(rx - 1, ry - 2, 'r'))
+
         return controlList
+
+    def getCannonControl(self, cross):
+        # 炮的控制点
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        flag = 'N'
+        while ry < 9:
+            if flag == 'Y' :
+                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+                if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None:
+                    break
+            if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None:
+                flag = 'Y'
+            ry += 1
+        ry = cross.ry
+        flag = 'N'
+        while ry > 0:
+            if flag == 'Y':
+                controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
+                if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None:
+                    break
+            if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None:
+                flag = 'Y'
+            ry -= 1
+        ry = cross.ry
+        flag = 'N'
+        while rx > 1:
+            if flag == 'Y':
+                controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
+                if self.getCrossByCoordinate(rx - 1, ry , 'r').piece != None:
+                    break
+            if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None:
+                flag = 'Y'
+            rx -= 1
+        rx = cross.rx
+        flag = 'N'
+        while rx < 9:
+            if flag == 'Y':
+                controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
+                if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None:
+                    break
+            if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None:
+                flag = 'Y'
+            rx += 1
+        return controlList
+
+    def getCannonAccess(self, cross):
+        controlList = []
+
+        rx = cross.rx
+        ry = cross.ry
+        while ry < 9:
+            if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None or ry + 1 == 9:
+                break
+            controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+            ry += 1
+        ry = cross.ry
+        while ry > 0:
+            if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None or ry - 1 == 0:
+                break
+            controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
+            ry -= 1
+        ry = cross.ry
+        while rx > 1:
+            if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None or rx - 1 == 1:
+                break
+            controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
+            rx -= 1
+        rx = cross.rx
+        while rx < 9:
+            if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None or rx + 1 == 9:
+                break
+            controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
+            rx += 1
+        return controlList
+
+
 if __name__ == '__main__':
     myboard = IBoard()
-    controlList = myboard.getRookAccess(myboard.getCrossByCoordinate(2,0,'r'))
+    controlList = myboard.getCannonAccess(myboard.getCrossByCoordinate(2,2,'r'))
     print(controlList[0].rx,controlList[0].ry)
     print(controlList[1].rx, controlList[1].ry)
-
+    print(controlList[2].rx, controlList[2].ry)
     print(controlList[3].rx, controlList[3].ry)
     print(controlList[4].rx, controlList[4].ry)
+    print(controlList[5].rx, controlList[5].ry)
+
+    print(controlList[6].rx, controlList[6].ry)
+    print(controlList[7].rx, controlList[7].ry)
+    print(controlList[8].rx, controlList[8].ry)
+    print(controlList[9].rx, controlList[9].ry)
+
+
+
+
+
 
