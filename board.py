@@ -323,21 +323,64 @@ class IBoard:
             rx += 1
         return controlList
 
+    def getPawnControl(self, cross):
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        bx = cross.bx
+        by = cross.by
+        if cross.piece.side == 'r' :
+            if ry <= 4:
+                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+            else:
+                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+                controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
+                controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
+        else:
+            if by <= 4:
+                controlList.append(self.getCrossByCoordinate(bx, by + 1, 'b'))
+            else:
+                controlList.append(self.getCrossByCoordinate(bx, by + 1, 'b'))
+                controlList.append(self.getCrossByCoordinate(bx - 1, by, 'b'))
+                controlList.append(self.getCrossByCoordinate(bx + 1, by, 'b'))
+        return controlList
+
+    def getBishopControl(self, cross):
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        bx = cross.bx
+        by = cross.by
+        if cross.piece.side == 'b':
+            if self.getCrossByCoordinate(bx - 1, by + 1, 'b')!=None and self.getCrossByCoordinate(bx - 1, by + 1, 'b').piece == None  and by + 2 <= 4 :
+                controlList.append(self.getCrossByCoordinate(bx - 2, by + 2, 'b'))
+            if self.getCrossByCoordinate(bx - 1, by - 1, 'b') !=None and self.getCrossByCoordinate(bx - 1, by - 1, 'b').piece == None and by + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(bx - 2, by - 2, 'b'))
+            if self.getCrossByCoordinate(bx + 1, by + 1, 'b')!= None and self.getCrossByCoordinate(bx + 1, by + 1, 'b').piece == None and by + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(bx + 2, by + 2, 'b'))
+            if self.getCrossByCoordinate(bx + 1, by - 1, 'b')!= None and self.getCrossByCoordinate(bx + 1, by - 1, 'b').piece == None and by + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(bx + 2, by - 2, 'b'))
+        else:
+            if self.getCrossByCoordinate(rx - 1, ry + 1, 'r') != None and self.getCrossByCoordinate(rx - 1, ry + 1, 'r').piece == None and ry + 2 <= 4 :
+                controlList.append(self.getCrossByCoordinate(rx - 2, ry + 2, 'r'))
+            if self.getCrossByCoordinate(rx - 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx - 1, ry - 1, 'r').piece == None and ry + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(rx - 2, ry - 2, 'r'))
+            if self.getCrossByCoordinate(rx + 1, ry + 1, 'r') != None and self.getCrossByCoordinate(rx + 1, ry + 1, 'r').piece == None and ry + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(rx + 2, ry + 2, 'r'))
+            if self.getCrossByCoordinate(rx + 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx + 1, ry - 1, 'r').piece == None and ry + 2 <= 4:
+                controlList.append(self.getCrossByCoordinate(rx + 2, ry - 2, 'r'))
+
+        return controlList
+
 
 if __name__ == '__main__':
     myboard = IBoard()
-    controlList = myboard.getCannonAccess(myboard.getCrossByCoordinate(2,2,'r'))
+    controlList = myboard.getBishopControl(myboard.getCrossByCoordinate(3,0,'r'))
     print(controlList[0].rx,controlList[0].ry)
     print(controlList[1].rx, controlList[1].ry)
     print(controlList[2].rx, controlList[2].ry)
     print(controlList[3].rx, controlList[3].ry)
-    print(controlList[4].rx, controlList[4].ry)
-    print(controlList[5].rx, controlList[5].ry)
 
-    print(controlList[6].rx, controlList[6].ry)
-    print(controlList[7].rx, controlList[7].ry)
-    print(controlList[8].rx, controlList[8].ry)
-    print(controlList[9].rx, controlList[9].ry)
 
 
 
