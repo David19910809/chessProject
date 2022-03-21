@@ -37,6 +37,11 @@ class IPiece:
         self.isDead = isDead
         self.value = value
         self.name = name
+class IAction:
+    def __init__(self,fromCross,toCross):
+        self.fromCross = fromCross
+        self.toCross = toCross
+
 
 class ICross:
     def __init__(self,rx,ry,bx,by,piece,value):
@@ -78,15 +83,15 @@ class IBoard:
         self.cross25 = ICross(7, 2, 3, 7, None,1)
         self.cross26 = ICross(8, 2, 2, 7, IPiece('r', 2, 'n', 4, '炮'),1)
         self.cross27 = ICross(9, 2, 1, 7, None,1)
-        self.cross28 = ICross(1, 3, 9, 6, IPiece('r', 1, 'n', 9, '兵'),1)
+        self.cross28 = ICross(1, 3, 9, 6, IPiece('r', 7, 'n', 1, '兵'),1)
         self.cross29 = ICross(2, 3, 8, 6, None,1)
-        self.cross30 = ICross(3, 3, 7, 6, IPiece('r', 1, 'n', 9, '兵'),1)
+        self.cross30 = ICross(3, 3, 7, 6, IPiece('r', 7, 'n', 1, '兵'),1)
         self.cross31 = ICross(4, 3, 6, 6, None,1)
-        self.cross32 = ICross(5, 3, 5, 6, IPiece('r', 1, 'n', 9, '兵'),1)
+        self.cross32 = ICross(5, 3, 5, 6, IPiece('r', 7, 'n', 1, '兵'),1)
         self.cross33 = ICross(6, 3, 4, 6, None,1)
-        self.cross34 = ICross(7, 3, 3, 6, IPiece('r', 1, 'n', 9, '兵'),1)
+        self.cross34 = ICross(7, 3, 3, 6, IPiece('r', 7, 'n', 1, '兵'),1)
         self.cross35 = ICross(8, 3, 2, 6, None,1)
-        self.cross36 = ICross(9, 3, 1, 6, IPiece('r', 1, 'n', 9, '兵'),1)
+        self.cross36 = ICross(9, 3, 1, 6, IPiece('r', 7, 'n', 1, '兵'),1)
         self.cross37 = ICross(1, 4, 9, 5, None,1)
         self.cross38 = ICross(2, 4, 8, 5, None,1)
         self.cross39 = ICross(3, 4, 7, 5, None,1)
@@ -105,17 +110,17 @@ class IBoard:
         self.cross52 = ICross(7, 5, 3, 4, None,1)
         self.cross53 = ICross(8, 5, 2, 4, None,1)
         self.cross54 = ICross(9, 5, 1, 4, None,1)
-        self.cross55 = ICross(1, 6, 9, 3, IPiece('b', 1, 'n', 9, '兵'),1)
+        self.cross55 = ICross(1, 6, 9, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross56 = ICross(2, 6, 8, 3, None,1)
-        self.cross57 = ICross(3, 6, 7, 3, IPiece('b', 1, 'n', 9, '兵'),1)
+        self.cross57 = ICross(3, 6, 7, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross58 = ICross(4, 6, 6, 3, None,1)
-        self.cross59 = ICross(5, 6, 5, 3, IPiece('b', 1, 'n', 9, '兵'),1)
+        self.cross59 = ICross(5, 6, 5, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross60 = ICross(6, 6, 4, 3, None,1)
-        self.cross61 = ICross(7, 6, 3, 3, IPiece('b', 1, 'n', 9, '兵'),1)
+        self.cross61 = ICross(7, 6, 3, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross62 = ICross(8, 6, 2, 3, None,1)
-        self.cross63 = ICross(9, 6, 1, 3, IPiece('b', 1, 'n', 9, '兵'),1)
+        self.cross63 = ICross(9, 6, 1, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross64 = ICross(1, 7, 9, 2, None,1)
-        self.cross65 = ICross(2, 7, 8, 2, IPiece('b', 2, 'n', 4, '炮'),1)
+        self.cross65 = ICross(2, 7, 8, 2, IPiece('b', 7, 'n', 4, '炮'),1)
         self.cross66 = ICross(3, 7, 7, 2, None,1)
         self.cross67 = ICross(4, 7, 6, 2, None,1)
         self.cross68 = ICross(5, 7, 5, 2, None,1)
@@ -188,6 +193,15 @@ class IBoard:
                 if x == cross.rx and y == cross.ry:
                     return cross
         return None
+
+    # 工具方法，根据控制点位列表得到行动列表
+    def getActionFromControlList(originCross,controlList):
+        actionList = []
+        for cross in controlList:
+            if cross.piece == None or originCross.piece.side != cross.piece.side:
+                actionList.append(IAction(originCross,cross))
+        return actionList
+
     #返回每个棋子的可达交叉点，即控制交叉点
     def getRookControl(self,cross):
         # 车的走法
@@ -420,8 +434,31 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(bx, by - 1, 'r'))
             if bx + 1 >= 3:
                 controlList.append(self.getCrossByCoordinate(bx, by + 1, 'r'))
-
         return controlList
+    def chessAction(self,side):
+        actionList = []
+        for cross in self.crosses:
+            if cross.piece != None and cross.piece.side == side:
+                if cross.piece.pieceId == 2:
+                    controlList = self.getCannonControl(cross)
+                    accessList = self.getCannonAccess(cross)
+                    for controlCross in controlList:
+                        if controlCross.piece !=None:
+                            accessList.append(controlCross)
+                    actionList.append(self.getActionFromControlList(accessList))
+                if cross.piece.pieceId == 1:
+                    actionList.append(self.getActionFromControlList(self.getRookControl(cross)))
+                if cross.piece.pieceId == 3:
+                    actionList.append(self.getActionFromControlList(self.getKnightControl(cross)))
+                if cross.piece.pieceId == 4:
+                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                if cross.piece.pieceId == 5:
+                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                if cross.piece.pieceId == 6:
+                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                if cross.piece.pieceId == 7:
+                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+         return   actionList
 
 
 if __name__ == '__main__':
