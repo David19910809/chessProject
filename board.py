@@ -372,10 +372,61 @@ class IBoard:
 
         return controlList
 
+    def getOfficialControl(self, cross):
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        bx = cross.bx
+        by = cross.by
+        if cross.piece.side == 'b':
+            if by == 0 or by == 2:
+                controlList.append(self.getCrossByCoordinate(5, 1, 'b'))
+            else:
+                controlList.append(self.getCrossByCoordinate(4, 0, 'b'))
+                controlList.append(self.getCrossByCoordinate(6, 0, 'b'))
+                controlList.append(self.getCrossByCoordinate(6, 2, 'b'))
+                controlList.append(self.getCrossByCoordinate(4, 2, 'b'))
+        else:
+            if ry == 0 or ry == 2:
+                controlList.append(self.getCrossByCoordinate(5, 1, 'r'))
+            else:
+                controlList.append(self.getCrossByCoordinate(4, 0, 'r'))
+                controlList.append(self.getCrossByCoordinate(6, 0, 'r'))
+                controlList.append(self.getCrossByCoordinate(6, 2, 'r'))
+                controlList.append(self.getCrossByCoordinate(4, 2, 'r'))
+        return controlList
+
+    def getKingControl(self, cross):
+        controlList = []
+        rx = cross.rx
+        ry = cross.ry
+        bx = cross.bx
+        by = cross.by
+        if cross.piece.side == 'r' :
+            if rx - 1 >= 4:
+                controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
+            if rx + 1 <= 6:
+                controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
+            if ry - 1 >= 0:
+                controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
+            if rx + 1 >= 3:
+                controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
+        else:
+            if bx - 1 >= 4:
+                controlList.append(self.getCrossByCoordinate(bx - 1, ry, 'r'))
+            if bx + 1 <= 6:
+                controlList.append(self.getCrossByCoordinate(bx + 1, ry, 'r'))
+            if by - 1 >= 0:
+                controlList.append(self.getCrossByCoordinate(bx, by - 1, 'r'))
+            if bx + 1 >= 3:
+                controlList.append(self.getCrossByCoordinate(bx, by + 1, 'r'))
+
+        return controlList
+
 
 if __name__ == '__main__':
     myboard = IBoard()
-    controlList = myboard.getBishopControl(myboard.getCrossByCoordinate(3,0,'r'))
+    controlList = myboard.getKingControl(myboard.getCrossByCoordinate(5,0,'b'))
     print(controlList[0].rx,controlList[0].ry)
     print(controlList[1].rx, controlList[1].ry)
     print(controlList[2].rx, controlList[2].ry)
