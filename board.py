@@ -42,7 +42,13 @@ class IAction:
         self.fromCross = fromCross
         self.toCross = toCross
 
-
+    def getActionName(self):
+        action = ''
+        if self.fromCross.piece.side =='b':
+            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.bx),';y坐标',str(self.fromCross.by),'==》x坐标:',str(self.toCross.bx),';y坐标',str(self.toCross.by)
+        if self.fromCross.piece.side == 'r':
+            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.rx),';y坐标'+str(self.fromCross.ry),'==》x坐标:',str(self.toCross.rx),';y坐标',str(self.toCross.ry)
+        return action
 class ICross:
     def __init__(self,rx,ry,bx,by,piece,value):
         self.rx = rx
@@ -195,7 +201,7 @@ class IBoard:
         return None
 
     # 工具方法，根据控制点位列表得到行动列表
-    def getActionFromControlList(originCross,controlList):
+    def getActionFromControlList(self,originCross,controlList):
         actionList = []
         for cross in controlList:
             if cross.piece == None or originCross.piece.side != cross.piece.side:
@@ -435,6 +441,8 @@ class IBoard:
             if bx + 1 >= 3:
                 controlList.append(self.getCrossByCoordinate(bx, by + 1, 'r'))
         return controlList
+
+    #获取行动列表
     def chessAction(self,side):
         actionList = []
         for cross in self.crosses:
@@ -445,29 +453,29 @@ class IBoard:
                     for controlCross in controlList:
                         if controlCross.piece !=None:
                             accessList.append(controlCross)
-                    actionList.append(self.getActionFromControlList(accessList))
+                    actionList.extend(self.getActionFromControlList(cross,accessList))
                 if cross.piece.pieceId == 1:
-                    actionList.append(self.getActionFromControlList(self.getRookControl(cross)))
+                    actionList.extend(self.getActionFromControlList(cross,self.getRookControl(cross)))
                 if cross.piece.pieceId == 3:
-                    actionList.append(self.getActionFromControlList(self.getKnightControl(cross)))
+                    actionList.extend(self.getActionFromControlList(cross,self.getKnightControl(cross)))
                 if cross.piece.pieceId == 4:
-                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                    actionList.extend(self.getActionFromControlList(cross,self.getBishopControl(cross)))
                 if cross.piece.pieceId == 5:
-                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                    actionList.extend(self.getActionFromControlList(cross,self.getOfficialControl(cross)))
                 if cross.piece.pieceId == 6:
-                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
+                    actionList.extend(self.getActionFromControlList(cross,self.getKingControl(cross)))
                 if cross.piece.pieceId == 7:
-                    actionList.append(self.getActionFromControlList(self.getBishopControl(cross)))
-         return   actionList
+                    actionList.extend(self.getActionFromControlList(cross,self.getPawnControl(cross)))
+
+        return   actionList
 
 
 if __name__ == '__main__':
     myboard = IBoard()
-    controlList = myboard.getKingControl(myboard.getCrossByCoordinate(5,0,'b'))
-    print(controlList[0].rx,controlList[0].ry)
-    print(controlList[1].rx, controlList[1].ry)
-    print(controlList[2].rx, controlList[2].ry)
-    print(controlList[3].rx, controlList[3].ry)
+    actionList = myboard.chessAction('r')
+    for action in actionList:
+        print(action.getActionName())
+
 
 
 
