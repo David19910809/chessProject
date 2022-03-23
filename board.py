@@ -1,5 +1,5 @@
 import numpy as np
-
+import copy
 #1.将棋盘视为一个封闭的环境
 #2.红方的分值为：子力价值+占位价值+控制点位价值+先手价值
 #3.以人类专家动作作为最佳实践训练模型。
@@ -41,6 +41,7 @@ class IAction:
     def __init__(self,fromCross,toCross):
         self.fromCross = fromCross
         self.toCross = toCross
+        self.label = None
 
     def getActionName(self):
         action = ''
@@ -62,6 +63,8 @@ class ICross:
 class IBoard:
     def __init__(self):
         self.player = 'r'
+        self.catch_count_r = 0
+        self.catch_count_b = 0
         self.cross1 = ICross(1, 0, 9, 9, IPiece('r', 1, 'n', 9, '车'),1)
         self.cross2 = ICross(2, 0, 8, 9, IPiece('r', 3, 'n', 4, '马'),1)
         self.cross3 = ICross(3, 0, 7, 9, IPiece('r', 4, 'n', 2, '相'),1)
@@ -239,8 +242,6 @@ class IBoard:
                 break
             rx +=1
         return controlList
-
-
 
     def getKnightControl(self, cross):
         # 马的走法
@@ -442,6 +443,35 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(bx, by + 1, 'r'))
         return controlList
 
+    #根据棋子返回控制列表
+    def getPieceControl(self,cross):
+        if cross.piece.pieceId == 1:
+            return self.getRookControl(cross)
+        if cross.piece.pieceId == 2:
+            return self.getCannonControl( cross)
+        if cross.piece.pieceId == 3:
+            return self.getKnightControl( cross)
+
+    # 获取总的控制点位
+    def controlList(self, side):
+        controlList = []
+        for cross in self.crosses:
+            if cross.piece != None and cross.piece.side == side:
+                if cross.piece.pieceId == 2:
+                    controlList.extend(self.getCannonControl(cross))
+                if cross.piece.pieceId == 1:
+                    controlList.extend(self.getRookControl(cross))
+                if cross.piece.pieceId == 3:
+                    controlList.extend(self.getKnightControl(cross))
+                if cross.piece.pieceId == 4:
+                    controlList.extend(self.getBishopControl(cross))
+                if cross.piece.pieceId == 5:
+                    controlList.extend(self.getOfficialControl(cross))
+                if cross.piece.pieceId == 6:
+                    controlList.extend(self.getKingControl(cross))
+                if cross.piece.pieceId == 7:
+                    controlList.extend(self.getPawnControl(cross))
+        return controlList
     #获取行动列表
     def chessAction(self,side):
         actionList = []
@@ -466,15 +496,67 @@ class IBoard:
                     actionList.extend(self.getActionFromControlList(cross,self.getKingControl(cross)))
                 if cross.piece.pieceId == 7:
                     actionList.extend(self.getActionFromControlList(cross,self.getPawnControl(cross)))
-
         return   actionList
+
+        # 获取行动列表
+
+    #给行动列表贴标签
+    def sovleActionLabel(self,actionList):
+        tmp = copy.deepcopy(self)
+        for action in actionList:
+
+            #############################
+
+            for cross in self.crosses:
+                if(cross.rx%9 ==0):
+                    if (cross.piece != None):
+                        print(cross.piece.name)
+                    else:
+                        print("——")
+                else:
+                    if (cross.piece != None):
+                        print(cross.piece.name,end="")
+                    else:
+                        print("——",end="")
+            flag = action.fromCross.piece.side
+            action.toCross.piece = action.fromCross.piece
+            action.fromCross.piece = None
+            controlList = self.getPieceControl(action.toCross)
+            controlList_otherSide = []
+            if flag == 'b':
+                controlList_otherSide = self.controlList('b')
+            else:
+                controlList_otherSide = self.controlList('r')
+            for controlCross in controlList:
+                for otherSideControlCross in controlList_otherSide:
+                    if otherSideControlCross == controlCross:
+                        action.label = 'catch'
+                        print('catch')
+
+        self = copy.deepcopy(tmp)
+
+        for cross in self.crosses:
+            if(cross.rx%9 ==0):
+                if (cross.piece != None):
+                    print(cross.piece.name)
+                else:
+                    print("——")
+            else:
+                if (cross.piece != None):
+                    print(cross.piece.name,end="")
+                else:
+                    print("——",end="")
+        return actionList
 
 
 if __name__ == '__main__':
     myboard = IBoard()
     actionList = myboard.chessAction('r')
+    actionList = myboard.sovleActionLabel(actionList)
     for action in actionList:
         print(action.getActionName())
+   # myboard.sovleActionLabel(actionList)
+
 
 
 
