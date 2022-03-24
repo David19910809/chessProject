@@ -46,9 +46,9 @@ class IAction:
     def getActionName(self):
         action = ''
         if self.fromCross.piece.side =='b':
-            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.bx),';y坐标',str(self.fromCross.by),'==》x坐标:',str(self.toCross.bx),';y坐标',str(self.toCross.by)
+            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.bx),';y坐标',str(self.fromCross.by),'==》x坐标:',str(self.toCross.bx),';y坐标',str(self.toCross.by),self.label
         if self.fromCross.piece.side == 'r':
-            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.rx),';y坐标'+str(self.fromCross.ry),'==》x坐标:',str(self.toCross.rx),';y坐标',str(self.toCross.ry)
+            action = self.fromCross.piece.name,'x坐标:',str(self.fromCross.rx),';y坐标'+str(self.fromCross.ry),'==》x坐标:',str(self.toCross.rx),';y坐标',str(self.toCross.ry),self.label
         return action
 class ICross:
     def __init__(self,rx,ry,bx,by,piece,value):
@@ -502,56 +502,79 @@ class IBoard:
 
     #给行动列表贴标签
     def sovleActionLabel(self,actionList):
-        tmp = copy.deepcopy(self)
+        #tmp = copy.deepcopy(self)
+
         for action in actionList:
-
-            #############################
-
-            for cross in self.crosses:
-                if(cross.rx%9 ==0):
-                    if (cross.piece != None):
-                        print(cross.piece.name)
-                    else:
-                        print("——")
-                else:
-                    if (cross.piece != None):
-                        print(cross.piece.name,end="")
-                    else:
-                        print("——",end="")
             flag = action.fromCross.piece.side
+            toCross_tmp = copy.deepcopy(action.toCross.piece)
+            fromCross_tmp = copy.deepcopy(action.fromCross.piece)
             action.toCross.piece = action.fromCross.piece
             action.fromCross.piece = None
             controlList = self.getPieceControl(action.toCross)
             controlList_otherSide = []
             if flag == 'b':
-                controlList_otherSide = self.controlList('b')
-            else:
                 controlList_otherSide = self.controlList('r')
-            for controlCross in controlList:
-                for otherSideControlCross in controlList_otherSide:
-                    if otherSideControlCross == controlCross:
-                        action.label = 'catch'
-                        print('catch')
-
-        self = copy.deepcopy(tmp)
-
-        for cross in self.crosses:
-            if(cross.rx%9 ==0):
-                if (cross.piece != None):
-                    print(cross.piece.name)
-                else:
-                    print("——")
             else:
-                if (cross.piece != None):
-                    print(cross.piece.name,end="")
-                else:
-                    print("——",end="")
+                controlList_otherSide = self.controlList('b')
+            if controlList != None:
+                for controlCross in controlList:
+                    if controlCross != None and controlCross.piece != None and controlCross.piece.side != fromCross_tmp.side:
+                        flag = 'Y'
+                        for otherSideControlCross in controlList_otherSide:
+                            if controlCross == otherSideControlCross:
+                                flag = 'N'
+                                break
+                        if flag == 'Y':
+                            action.label = 'catch'
+                            break
+            action.toCross.piece = copy.deepcopy(toCross_tmp)
+            action.fromCross.piece = copy.deepcopy(fromCross_tmp)
+
         return actionList
+
+        # 给行动列表贴标签
+    def sovleActionLabelTest(self, action):
+        # tmp = copy.deepcopy(self)
+
+
+        flag = action.fromCross.piece.side
+        toCross_tmp = copy.deepcopy(action.toCross.piece)
+        fromCross_tmp = copy.deepcopy(action.fromCross.piece)
+        action.toCross.piece = action.fromCross.piece
+        action.fromCross.piece = None
+        controlList = self.getPieceControl(action.toCross)
+        controlList_otherSide = []
+        if flag == 'b':
+            controlList_otherSide = self.controlList('r')
+        else:
+            controlList_otherSide = self.controlList('b')
+
+        if controlList != None:
+            for controlCross in controlList:
+                if controlCross!=None and controlCross.piece!=None and controlCross.piece.side !=fromCross_tmp.side:
+                    flag = 'Y'
+                    for otherSideControlCross in controlList_otherSide:
+                        if controlCross == otherSideControlCross:
+                            flag = 'N'
+                            break
+                    if flag == 'Y':
+                        action.label='catch'
+                        break
+
+
+
+
+
+        action.toCross.piece = copy.deepcopy(toCross_tmp)
+        action.fromCross.piece = copy.deepcopy(fromCross_tmp)
+
+        return action
 
 
 if __name__ == '__main__':
     myboard = IBoard()
     actionList = myboard.chessAction('r')
+
     actionList = myboard.sovleActionLabel(actionList)
     for action in actionList:
         print(action.getActionName())
