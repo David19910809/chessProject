@@ -89,7 +89,7 @@ class IAction:
                     str3 = '进'
                     str4 = str(self.toCross.ry - self.fromCross.ry)
                     if self.fromCross.piece.pieceId == 3 or self.fromCross.piece.pieceId == 4 or self.fromCross.piece.pieceId == 5:
-                        str4 = str(self.toCross.bx)
+                        str4 = str(self.toCross.rx)
             action = str0 + str1 + str2 + str3 + str4
         return action
 class ICross:
@@ -425,20 +425,20 @@ class IBoard:
         if cross.piece.side == 'b':
             if self.getCrossByCoordinate(bx - 1, by + 1, 'b')!=None and self.getCrossByCoordinate(bx - 1, by + 1, 'b').piece == None  and by + 2 <= 4 :
                 controlList.append(self.getCrossByCoordinate(bx - 2, by + 2, 'b'))
-            if self.getCrossByCoordinate(bx - 1, by - 1, 'b') !=None and self.getCrossByCoordinate(bx - 1, by - 1, 'b').piece == None and by + 2 <= 4:
+            if self.getCrossByCoordinate(bx - 1, by - 1, 'b') !=None and self.getCrossByCoordinate(bx - 1, by - 1, 'b').piece == None :
                 controlList.append(self.getCrossByCoordinate(bx - 2, by - 2, 'b'))
             if self.getCrossByCoordinate(bx + 1, by + 1, 'b')!= None and self.getCrossByCoordinate(bx + 1, by + 1, 'b').piece == None and by + 2 <= 4:
                 controlList.append(self.getCrossByCoordinate(bx + 2, by + 2, 'b'))
-            if self.getCrossByCoordinate(bx + 1, by - 1, 'b')!= None and self.getCrossByCoordinate(bx + 1, by - 1, 'b').piece == None and by + 2 <= 4:
+            if self.getCrossByCoordinate(bx + 1, by - 1, 'b')!= None and self.getCrossByCoordinate(bx + 1, by - 1, 'b').piece == None :
                 controlList.append(self.getCrossByCoordinate(bx + 2, by - 2, 'b'))
         else:
             if self.getCrossByCoordinate(rx - 1, ry + 1, 'r') != None and self.getCrossByCoordinate(rx - 1, ry + 1, 'r').piece == None and ry + 2 <= 4 :
                 controlList.append(self.getCrossByCoordinate(rx - 2, ry + 2, 'r'))
-            if self.getCrossByCoordinate(rx - 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx - 1, ry - 1, 'r').piece == None and ry + 2 <= 4:
+            if self.getCrossByCoordinate(rx - 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx - 1, ry - 1, 'r').piece == None :
                 controlList.append(self.getCrossByCoordinate(rx - 2, ry - 2, 'r'))
             if self.getCrossByCoordinate(rx + 1, ry + 1, 'r') != None and self.getCrossByCoordinate(rx + 1, ry + 1, 'r').piece == None and ry + 2 <= 4:
                 controlList.append(self.getCrossByCoordinate(rx + 2, ry + 2, 'r'))
-            if self.getCrossByCoordinate(rx + 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx + 1, ry - 1, 'r').piece == None and ry + 2 <= 4:
+            if self.getCrossByCoordinate(rx + 1, ry - 1, 'r') != None and self.getCrossByCoordinate(rx + 1, ry - 1, 'r').piece == None :
                 controlList.append(self.getCrossByCoordinate(rx + 2, ry - 2, 'r'))
 
         return controlList
@@ -480,17 +480,17 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
             if ry - 1 >= 0 :
                 controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
-            if rx + 1 >= 3 :
+            if rx + 1 <= 3 :
                 controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
         else:
             if bx - 1 >= 4 :
-                controlList.append(self.getCrossByCoordinate(bx - 1, ry, 'r'))
+                controlList.append(self.getCrossByCoordinate(bx - 1, by, 'b'))
             if bx + 1 <= 6 :
-                controlList.append(self.getCrossByCoordinate(bx + 1, ry, 'r'))
+                controlList.append(self.getCrossByCoordinate(bx + 1, by, 'b'))
             if by - 1 >= 0 :
-                controlList.append(self.getCrossByCoordinate(bx, by - 1, 'r'))
-            if bx + 1 >= 3 :
-                controlList.append(self.getCrossByCoordinate(bx, by + 1, 'r'))
+                controlList.append(self.getCrossByCoordinate(bx, by - 1, 'b'))
+            if by + 1 <= 3 :
+                controlList.append(self.getCrossByCoordinate(bx, by + 1, 'b'))
         return controlList
 
     #根据棋子返回控制列表
@@ -551,32 +551,36 @@ class IBoard:
             otherSide = 'r'
         else:
             otherSide = 'b'
-        controlList_otherSide = self.controlList(otherSide)
-        for otherSideCross in controlList_otherSide:
-            for action in actionList:
-                toCross_tmp = copy.deepcopy(action.toCross.piece)
-                fromCross_tmp = copy.deepcopy(action.fromCross.piece)
-                action.toCross.piece = action.fromCross.piece
-                action.fromCross.piece = None
-                controlList_otherSide = self.controlList(otherSide)
+        for action in actionList:
+            #先在棋盘完成行动
+            toCross_tmp = copy.deepcopy(action.toCross.piece)
+            fromCross_tmp = copy.deepcopy(action.fromCross.piece)
+            action.toCross.piece = action.fromCross.piece
+            action.fromCross.piece = None
+            #获取对方控制点位列表，如果老帅被控制，则判定行动非法
+            controlList_otherSide = self.controlList(otherSide)
+            for otherSideCross in controlList_otherSide:
                 if otherSideCross != None and otherSideCross.piece != None and otherSideCross.piece.pieceId == 6 and otherSideCross.piece.side == self.player:
+                    #行动不可让老帅被将军
                     actionList.remove(action)
-                    continue
-                #老帅见面限制
-                king1 = self.getCrossBypieceId(6,'r')
-                king2 = self.getCrossBypieceId(6,'b')
-                ryflag1 = king1.ry
-                ryflag2 = king2.ry
-                ryline = 'N'
-                if king1.rx == king2.rx:
-                    while ryflag2 - ryflag1 >0:
-                        if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
-                            ryline = 'Y'
-                        ryflag1+=1
-                if ryline == 'N':
-                    actionList.remove(action)
-                action.toCross.piece = copy.deepcopy(toCross_tmp)
-                action.fromCross.piece = copy.deepcopy(fromCross_tmp)
+                    break
+                else:
+                    #老帅见面限制
+                    king1 = self.getCrossBypieceId(6,'r')
+                    king2 = self.getCrossBypieceId(6,'b')
+                    ryflag1 = king1.ry
+                    ryflag2 = king2.ry
+                    ryline = 'N'
+                    if king1.rx == king2.rx:
+                        while ryflag2 - ryflag1 >0:
+                            if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
+                                ryline = 'Y'
+                            ryflag1+=1
+                    if ryline == 'N':
+                        actionList.remove(action)
+                        break
+            action.toCross.piece = copy.deepcopy(toCross_tmp)
+            action.fromCross.piece = copy.deepcopy(fromCross_tmp)
 
         #行动标签
         for action in actionList:
@@ -629,7 +633,6 @@ class IBoard:
         if self.unkill_count >= 121:
             print(self.player,'和棋')
         else:
-
             action = choice(actionList)
             eatAction = []
             for action in actionList:
@@ -637,7 +640,7 @@ class IBoard:
                     eatAction.append(action)
             if eatAction != None and len(eatAction)>0:
                 action = choice(eatAction)
-            print(action.getActionName(),action.label)
+            print(action.getActionName(),action.label,action.fromCross.rx,action.fromCross.ry,action.toCross.rx,action.toCross.ry)
             action.toCross.piece = action.fromCross.piece
             action.fromCross.piece = None
             if self.player == 'r':
@@ -646,6 +649,8 @@ class IBoard:
                 self.player = 'r'
             if 'catch' in action.label or 'check' in action.label:
                 self.catch_count_b += 1
+            else:
+                self.catch_count_b = 0
             if 'eat' not in action.label:
                 self.unkill_count += 1
             else:
