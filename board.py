@@ -198,6 +198,8 @@ class IBoard:
         self.cross88 = ICross(7, 9, 3, 0, IPiece('b', 4, 'n', 2, '相'),1)
         self.cross89 = ICross(8, 9, 2, 0, IPiece('b', 3, 'n', 4, '马'),1)
         self.cross90 = ICross(9, 9, 1, 0, IPiece('b', 1, 'n', 9, '车'),1)
+
+
         self.crosses = [self.cross1,self.cross2,self.cross3,self.cross4,self.cross5,self.cross6,self.cross7,self.cross8,self.cross9,
                         self.cross10, self.cross11, self.cross12, self.cross13, self.cross14, self.cross15, self.cross16,
                         self.cross17, self.cross18,
@@ -369,25 +371,25 @@ class IBoard:
         rx = cross.rx
         ry = cross.ry
         while ry < 9:
-            if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None or ry + 1 == 9:
+            if self.getCrossByCoordinate(rx, ry + 1, 'r').piece != None or ry + 1 == 10:
                 break
             controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
             ry += 1
         ry = cross.ry
         while ry > 0:
-            if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None or ry - 1 == 0:
+            if self.getCrossByCoordinate(rx, ry - 1, 'r').piece != None or ry - 1 == -1:
                 break
             controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
             ry -= 1
         ry = cross.ry
         while rx > 1:
-            if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None or rx - 1 == 1:
+            if self.getCrossByCoordinate(rx - 1, ry, 'r').piece != None or rx - 1 == 0:
                 break
             controlList.append(self.getCrossByCoordinate(rx - 1, ry, 'r'))
             rx -= 1
         rx = cross.rx
         while rx < 9:
-            if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None or rx + 1 == 9:
+            if self.getCrossByCoordinate(rx + 1, ry, 'r').piece != None or rx + 1 == 10:
                 break
             controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
             rx += 1
@@ -562,6 +564,7 @@ class IBoard:
             for otherSideCross in controlList_otherSide:
                 if otherSideCross != None and otherSideCross.piece != None and otherSideCross.piece.pieceId == 6 and otherSideCross.piece.side == self.player:
                     #行动不可让老帅被将军
+                    print('行动非法',len(actionList))
                     actionList.remove(action)
                     break
                 else:
@@ -575,6 +578,7 @@ class IBoard:
                         while ryflag2 - ryflag1 >0:
                             if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
                                 ryline = 'Y'
+                                break
                             ryflag1+=1
                     if ryline == 'N':
                         actionList.remove(action)
@@ -584,18 +588,12 @@ class IBoard:
 
         #行动标签
         for action in actionList:
-            flag = action.fromCross.piece.side
             toCross_tmp = copy.deepcopy(action.toCross.piece)
             fromCross_tmp = copy.deepcopy(action.fromCross.piece)
             action.toCross.piece = action.fromCross.piece
             action.fromCross.piece = None
             piececontrolList = self.getPieceControl(action.toCross)
             controlList = self.controlList(fromCross_tmp.side)
-            controlList_otherSide = []
-            if flag == 'b':
-                otherSide = 'r'
-            else:
-                otherSide = 'b'
             controlList_otherSide = self.controlList(otherSide)
             #吃子
             if toCross_tmp!=None :
@@ -614,7 +612,7 @@ class IBoard:
                             break
             #将军
             for cross in controlList:
-                if cross != None and cross.piece != None and cross.piece.pieceId == 6 and flag != fromCross_tmp.side:
+                if cross != None and cross.piece != None and cross.piece.pieceId == 6 and self.player != cross.piece.side:
                     action.label.append('check')
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
@@ -636,7 +634,7 @@ class IBoard:
             action = choice(actionList)
             eatAction = []
             for action in actionList:
-                if 'eat' in action.label:
+                if 'eat' in action.label or 'catch' in action.label:
                     eatAction.append(action)
             if eatAction != None and len(eatAction)>0:
                 action = choice(eatAction)
@@ -659,16 +657,40 @@ class IBoard:
     # def simulateGame(self):
     #     while 1 == 1:
 
-
+#获取行动列表test
+    def chessActionTest(self):
+        actionList = []
+        for cross in self.crosses:
+            if cross.piece != None and cross.piece.side == 'b':
+                if cross.piece.pieceId == 2:
+                    controlList = self.getCannonControl(cross)
+                    accessList = self.getCannonAccess(cross)
+                    for controlCross in controlList:
+                        if controlCross.piece !=None:
+                            accessList.append(controlCross)
+                    actionList.extend(self.getActionFromControlList(cross,accessList))
+        return actionList
 
 if __name__ == '__main__':
     myboard = IBoard()
+    # crosses = myboard.getCannonAccess(myboard.cross65)
+    for cross in myboard.crosses:
+        if(cross.rx%9 ==0):
+            if (cross.piece != None):
+                print(cross.piece.name)
+            else:
+                print("——")
+        else:
+            if (cross.piece != None):
+                print(cross.piece.name,end="")
+            else:
+                print("——",end="")
+    # for cross in crosses:
+    #     print(cross.rx,cross.ry)
     while 1==1:
         myboard.takeAction()
-    # actionList = myboard.chessAction()
-    # for action in actionList:
-    #     print(action.getActionName())
-
+    for action in actionList:
+        print(action.getActionName())
    # myboard.sovleActionLabel(actionList)
 
 
