@@ -43,6 +43,7 @@ class IAction:
         self.fromCross = fromCross
         self.toCross = toCross
         self.label = []
+        self.name = self.getActionName()
 
     def getActionName(self):
         action = ''
@@ -172,7 +173,7 @@ class IBoard:
         self.cross62 = ICross(8, 6, 2, 3, None,1)
         self.cross63 = ICross(9, 6, 1, 3, IPiece('b', 7, 'n', 1, '兵'),1)
         self.cross64 = ICross(1, 7, 9, 2, None,1)
-        self.cross65 = ICross(2, 7, 8, 2, IPiece('b', 7, 'n', 4, '炮'),1)
+        self.cross65 = ICross(2, 7, 8, 2, IPiece('b', 2, 'n', 4, '炮'),1)
         self.cross66 = ICross(3, 7, 7, 2, None,1)
         self.cross67 = ICross(4, 7, 6, 2, None,1)
         self.cross68 = ICross(5, 7, 5, 2, None,1)
@@ -198,8 +199,6 @@ class IBoard:
         self.cross88 = ICross(7, 9, 3, 0, IPiece('b', 4, 'n', 2, '相'),1)
         self.cross89 = ICross(8, 9, 2, 0, IPiece('b', 3, 'n', 4, '马'),1)
         self.cross90 = ICross(9, 9, 1, 0, IPiece('b', 1, 'n', 9, '车'),1)
-
-
         self.crosses = [self.cross1,self.cross2,self.cross3,self.cross4,self.cross5,self.cross6,self.cross7,self.cross8,self.cross9,
                         self.cross10, self.cross11, self.cross12, self.cross13, self.cross14, self.cross15, self.cross16,
                         self.cross17, self.cross18,
@@ -482,7 +481,7 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
             if ry - 1 >= 0 :
                 controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
-            if rx + 1 <= 3 :
+            if ry + 1 <= 3 :
                 controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
         else:
             if bx - 1 >= 4 :
@@ -527,6 +526,8 @@ class IBoard:
     #获取行动列表
     def chessAction(self):
         actionList = []
+        valideActionList = []
+        valideActionList_final = []
         for cross in self.crosses:
             if cross.piece != None and cross.piece.side == self.player:
                 if cross.piece.pieceId == 2:
@@ -553,7 +554,9 @@ class IBoard:
             otherSide = 'r'
         else:
             otherSide = 'b'
+
         for action in actionList:
+            isValide = 'valide'
             actionName = action.getActionName()
             #先在棋盘完成行动
             toCross_tmp = copy.deepcopy(action.toCross.piece)
@@ -568,29 +571,29 @@ class IBoard:
                     print('行动非法',actionName)
                     action.toCross.piece = copy.deepcopy(toCross_tmp)
                     action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-                    actionList.remove(action)
+                    isValide = 'unValide'
                     break
-            #老帅见面限制
-            if action in actionList:
+            #老帅见面限制--需改进
+            if  isValide != 'unValide':
                 king1 = self.getCrossBypieceId(6,'r')
                 king2 = self.getCrossBypieceId(6,'b')
                 ryflag1 = king1.ry
                 ryflag2 = king2.ry
                 ryline = 'N'
-                if king1.rx == king2.rx:
-                    while ryflag2 - ryflag1 >0:
-                        if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
-                            ryline = 'Y'
-                            break
-                        ryflag1+=1
-                if ryline == 'N':
-                    actionList.remove(action)
-            if action in actionList:
-                print('#####合法行动', actionName)
+                while ryflag2 - ryflag1 >0:
+                    if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
+                        ryline = 'Y'
+                        break
+                    ryflag1+=1
+                if king1.rx == king2.rx and ryline == 'N':
+                    isValide = 'unValide'
+                    print('!!!非法行动', actionName)
+            if isValide == 'valide':
+                valideActionList.append(action)
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
         #行动标签
-        for action in actionList:
+        for action in valideActionList:
             toCross_tmp = copy.deepcopy(action.toCross.piece)
             fromCross_tmp = copy.deepcopy(action.fromCross.piece)
             action.toCross.piece = action.fromCross.piece
@@ -619,13 +622,13 @@ class IBoard:
                     action.label.append('check')
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-        #长捉限定
-        for action in actionList:
-            if self.player == 'b' and self.catch_count_b > 8 and ('catch' in action.label or 'check' in action.label):
-                actionList.remove(action)
-            if self.player == 'r' and self.catch_count_r > 8 and ('catch' in action.label or 'check' in action.label):
-                actionList.remove(action)
-        return   actionList
+        #长捉限定--待验证
+        for action in valideActionList:
+            if self.player == 'b' and self.catch_count_b < 8 or ('catch' not in action.label or 'check' not in action.label):
+                valideActionList_final.append(action)
+            if self.player == 'r' and self.catch_count_r < 8 or ('catch' not in action.label or 'check' not in action.label):
+                valideActionList_final.append(action)
+        return   valideActionList_final
 
     def takeAction(self):
         actionList = self.chessAction()
@@ -667,25 +670,8 @@ class IBoard:
     # def simulateGame(self):
     #     while 1 == 1:
 
-#获取行动列表test
-    def chessActionTest(self):
-        actionList = []
-        for cross in self.crosses:
-            if cross.piece != None and cross.piece.side == 'b':
-                if cross.piece.pieceId == 2:
-                    controlList = self.getCannonControl(cross)
-                    accessList = self.getCannonAccess(cross)
-                    for controlCross in controlList:
-                        if controlCross.piece !=None:
-                            accessList.append(controlCross)
-                    actionList.extend(self.getActionFromControlList(cross,accessList))
-        return actionList
-
 if __name__ == '__main__':
     myboard = IBoard()
-    # crosses = myboard.getCannonAccess(myboard.cross65)
-    # for cross in crosses:
-    #     print(cross.rx,cross.ry)
     while 1==1:
         # for cross in myboard.crosses:
         #     if (cross.rx % 9 == 0):
@@ -699,6 +685,9 @@ if __name__ == '__main__':
         #         else:
         #             print("——", end="")
         myboard.takeAction()
+
+
+
 
    # myboard.sovleActionLabel(actionList)
 
