@@ -554,6 +554,7 @@ class IBoard:
         else:
             otherSide = 'b'
         for action in actionList:
+            actionName = action.getActionName()
             #先在棋盘完成行动
             toCross_tmp = copy.deepcopy(action.toCross.piece)
             fromCross_tmp = copy.deepcopy(action.fromCross.piece)
@@ -564,28 +565,30 @@ class IBoard:
             for otherSideCross in controlList_otherSide:
                 if otherSideCross != None and otherSideCross.piece != None and otherSideCross.piece.pieceId == 6 and otherSideCross.piece.side == self.player:
                     #行动不可让老帅被将军
-                    print('行动非法',len(actionList))
+                    print('行动非法',actionName)
+                    action.toCross.piece = copy.deepcopy(toCross_tmp)
+                    action.fromCross.piece = copy.deepcopy(fromCross_tmp)
                     actionList.remove(action)
                     break
-                else:
-                    #老帅见面限制
-                    king1 = self.getCrossBypieceId(6,'r')
-                    king2 = self.getCrossBypieceId(6,'b')
-                    ryflag1 = king1.ry
-                    ryflag2 = king2.ry
-                    ryline = 'N'
-                    if king1.rx == king2.rx:
-                        while ryflag2 - ryflag1 >0:
-                            if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
-                                ryline = 'Y'
-                                break
-                            ryflag1+=1
-                    if ryline == 'N':
-                        actionList.remove(action)
-                        break
+            #老帅见面限制
+            if action in actionList:
+                king1 = self.getCrossBypieceId(6,'r')
+                king2 = self.getCrossBypieceId(6,'b')
+                ryflag1 = king1.ry
+                ryflag2 = king2.ry
+                ryline = 'N'
+                if king1.rx == king2.rx:
+                    while ryflag2 - ryflag1 >0:
+                        if self.getCrossByCoordinate(king1.rx,ryflag1+1,'r') != None and self.getCrossByCoordinate(king1.rx,ryflag1+1,'r').piece != None:
+                            ryline = 'Y'
+                            break
+                        ryflag1+=1
+                if ryline == 'N':
+                    actionList.remove(action)
+            if action in actionList:
+                print('#####合法行动', actionName)
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-
         #行动标签
         for action in actionList:
             toCross_tmp = copy.deepcopy(action.toCross.piece)
@@ -633,9 +636,16 @@ class IBoard:
         else:
             action = choice(actionList)
             eatAction = []
+            catchAction = []
             for action in actionList:
-                if 'eat' in action.label or 'catch' in action.label:
+                if 'eat' in action.label :
                     eatAction.append(action)
+            for action in actionList:
+                if 'catch' in action.label :
+                    catchAction.append(action)
+
+            if catchAction != None and len(catchAction)>0:
+                action = choice(catchAction)
             if eatAction != None and len(eatAction)>0:
                 action = choice(eatAction)
             print(action.getActionName(),action.label,action.fromCross.rx,action.fromCross.ry,action.toCross.rx,action.toCross.ry)
@@ -674,23 +684,22 @@ class IBoard:
 if __name__ == '__main__':
     myboard = IBoard()
     # crosses = myboard.getCannonAccess(myboard.cross65)
-    for cross in myboard.crosses:
-        if(cross.rx%9 ==0):
-            if (cross.piece != None):
-                print(cross.piece.name)
-            else:
-                print("——")
-        else:
-            if (cross.piece != None):
-                print(cross.piece.name,end="")
-            else:
-                print("——",end="")
     # for cross in crosses:
     #     print(cross.rx,cross.ry)
     while 1==1:
+        # for cross in myboard.crosses:
+        #     if (cross.rx % 9 == 0):
+        #         if (cross.piece != None):
+        #             print(cross.piece.name)
+        #         else:
+        #             print("——")
+        #     else:
+        #         if (cross.piece != None):
+        #             print(cross.piece.name, end="")
+        #         else:
+        #             print("——", end="")
         myboard.takeAction()
-    for action in actionList:
-        print(action.getActionName())
+
    # myboard.sovleActionLabel(actionList)
 
 
