@@ -673,17 +673,17 @@ class IBoard:
 if __name__ == '__main__':
     myboard = IBoard()
     while 1==1:
-        # for cross in myboard.crosses:
-        #     if (cross.rx % 9 == 0):
-        #         if (cross.piece != None):
-        #             print(cross.piece.name)
-        #         else:
-        #             print("——")
-        #     else:
-        #         if (cross.piece != None):
-        #             print(cross.piece.name, end="")
-        #         else:
-        #             print("——", end="")
+        for cross in myboard.crosses:
+            if (cross.rx % 9 == 0):
+                if (cross.piece != None):
+                    print(cross.piece.name)
+                else:
+                    print("——")
+            else:
+                if (cross.piece != None):
+                    print(cross.piece.name, end="")
+                else:
+                    print("——", end="")
         myboard.takeAction()
 
 
