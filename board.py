@@ -667,6 +667,19 @@ class IBoard:
             else:
                 self.unkill_count = 0
 
+    def getnp(self):
+        crossList = []
+        for cross in self.crosses:
+            if (cross.piece != None):
+                if cross.piece.side == 'r':
+                    crossList.append(cross.piece.pieceId)
+                else:
+                    crossList.append(-cross.piece.pieceId)
+            else:
+                crossList.append(0)
+
+        return crossList
+
     # def simulateGame(self):
     #     while 1 == 1:
 
@@ -695,6 +708,7 @@ if __name__ == '__main__':
                 else:
                     strtmp = "口"
                     print(mat.format(strtmp=strtmp, len=5), end="")
+
         myboard.takeAction()
 
 

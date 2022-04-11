@@ -5,9 +5,13 @@ from tensorflow import keras
 #暂定使用lstm构建模型
 from board import IBoard
 
-iboard = IBoard()
+# iboard = IBoard()
+# boardTarget = np.array(iboard.getnp())
+# boardTarget = boardTarget.reshape((10,9))
+# print(boardTarget)
 # Construct an instance of CustomModel
-inputs = keras.Input(iboard.crosses)
+
+inputs = keras.Input(shape=(10,9,1,))
 outputs = keras.layers.Dense(1)(inputs)
 model = keras.Model(inputs, outputs)
 
@@ -15,8 +19,16 @@ model = keras.Model(inputs, outputs)
 model.compile(optimizer="adam", loss="mse", metrics=["mae"])
 
 # Just use `fit` as usual -- you can use callbacks, etc.
-xtest = np.random.random((1000,90))
-ytest = np.random.random((1000,1))
-model.fit(xtest, ytest, epochs=5)
+# Just use `fit` as usual
+x = np.random.random((16,10,9))
+y = np.random.random((16,10,9))
+print('##########')
+print(x)
+print('##########')
+print(y)
+model.fit(x, y, epochs=3)
+
+
+
 
 
