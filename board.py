@@ -481,7 +481,7 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(rx + 1, ry, 'r'))
             if ry - 1 >= 0 :
                 controlList.append(self.getCrossByCoordinate(rx, ry - 1, 'r'))
-            if ry + 1 <= 3 :
+            if ry + 1 <= 2 :
                 controlList.append(self.getCrossByCoordinate(rx, ry + 1, 'r'))
         else:
             if bx - 1 >= 4 :
@@ -490,7 +490,7 @@ class IBoard:
                 controlList.append(self.getCrossByCoordinate(bx + 1, by, 'b'))
             if by - 1 >= 0 :
                 controlList.append(self.getCrossByCoordinate(bx, by - 1, 'b'))
-            if by + 1 <= 3 :
+            if by + 1 <= 2 :
                 controlList.append(self.getCrossByCoordinate(bx, by + 1, 'b'))
         return controlList
 
@@ -672,19 +672,32 @@ class IBoard:
 
 if __name__ == '__main__':
     myboard = IBoard()
-    while 1==1:
+    mat = "{strtmp: ^{len}}"
+    while 1 == 1:
         for cross in myboard.crosses:
             if (cross.rx % 9 == 0):
                 if (cross.piece != None):
-                    print(cross.piece.name)
+                    strtmp = cross.piece.name
+                    if cross.piece.side == 'r':
+                        print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+                    else:
+                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
                 else:
-                    print("——")
+                    strtmp = "口"
+                    print(mat.format(strtmp=strtmp,len=5))
             else:
                 if (cross.piece != None):
-                    print(cross.piece.name, end="")
+                    strtmp = cross.piece.name
+                    if cross.piece.side == 'r':
+                        print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
+                    else:
+                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
                 else:
-                    print("——", end="")
+                    strtmp = "口"
+                    print(mat.format(strtmp=strtmp, len=5), end="")
         myboard.takeAction()
+
+
 
 
 
