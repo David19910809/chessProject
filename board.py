@@ -573,7 +573,7 @@ class IBoard:
                     action.fromCross.piece = copy.deepcopy(fromCross_tmp)
                     isValide = 'unValide'
                     break
-            #老帅见面限制--需改进
+            #老帅照面限制
             if  isValide != 'unValide':
                 king1 = self.getCrossBypieceId(6,'r')
                 king2 = self.getCrossBypieceId(6,'b')
