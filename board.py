@@ -568,7 +568,7 @@ class IBoard:
             for otherSideCross in controlList_otherSide:
                 if otherSideCross != None and otherSideCross.piece != None and otherSideCross.piece.pieceId == 6 and otherSideCross.piece.side == self.player:
                     #行动不可让老帅被将军
-                    print('行动非法',actionName)
+                    #print('行动非法',actionName)
                     action.toCross.piece = copy.deepcopy(toCross_tmp)
                     action.fromCross.piece = copy.deepcopy(fromCross_tmp)
                     isValide = 'unValide'
@@ -587,7 +587,7 @@ class IBoard:
                     ryflag1+=1
                 if king1.rx == king2.rx and ryline == 'N':
                     isValide = 'unValide'
-                    print('!!!非法行动', actionName)
+                    #print('!!!非法行动', actionName)
             if isValide == 'valide':
                 valideActionList.append(action)
             action.toCross.piece = copy.deepcopy(toCross_tmp)
@@ -630,6 +630,8 @@ class IBoard:
                 valideActionList_final.append(action)
         return   valideActionList_final
 
+
+
     def takeAction(self):
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
@@ -651,7 +653,9 @@ class IBoard:
                 action = choice(catchAction)
             if eatAction != None and len(eatAction)>0:
                 action = choice(eatAction)
-            print(action.getActionName(),action.label,action.fromCross.rx,action.fromCross.ry,action.toCross.rx,action.toCross.ry)
+            print('############################################################')
+            print('############################################################')
+            print(action.getActionName(), action.label)
             action.toCross.piece = action.fromCross.piece
             action.fromCross.piece = None
             if self.player == 'r':
@@ -687,6 +691,13 @@ if __name__ == '__main__':
     myboard = IBoard()
     mat = "{strtmp: ^{len}}"
     while 1 == 1:
+        actionList = myboard.chessAction()
+        if actionList == None or len(actionList) < 1:
+            print(myboard.player, '输了')
+            break
+        if myboard.unkill_count >= 121:
+            print(myboard.player, '和棋')
+            break
         for cross in myboard.crosses:
             if (cross.rx % 9 == 0):
                 if (cross.piece != None):
