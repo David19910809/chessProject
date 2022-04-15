@@ -681,8 +681,34 @@ class IBoard:
                     crossList.append(-cross.piece.pieceId)
             else:
                 crossList.append(0)
-
         return crossList
+    def getnpList(self):
+        boardList = []
+        valideActionList_final = self.chessAction()
+        for action in valideActionList_final:
+            # 先在棋盘完成行动
+            toCross_tmp = copy.deepcopy(action.toCross.piece)
+            fromCross_tmp = copy.deepcopy(action.fromCross.piece)
+
+            crossList = []
+            for cross in self.crosses:
+                if (cross.piece != None):
+                    if cross.piece.side == 'r':
+                        crossList.append(cross.piece.pieceId)
+                    else:
+                        crossList.append(-cross.piece.pieceId)
+                else:
+                    crossList.append(0)
+            crossList_tmp = copy.deepcopy(crossList)
+            boardList.append(crossList)
+            crossList.clear()
+            action.toCross.piece = copy.deepcopy(toCross_tmp)
+            action.fromCross.piece = copy.deepcopy(fromCross_tmp)
+        if len(boardList)<50:
+            while 50 - len(boardList) > 0:
+                boardList.append([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
+        return boardList
 
     # def simulateGame(self):
     #     while 1 == 1:
