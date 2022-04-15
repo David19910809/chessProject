@@ -47,14 +47,13 @@ class IAction:
 
     def getActionName(self):
         action = ''
-        str0 = ''
         str1 = ''
         str2 = ''
         str3 = ''
         str4 = ''
         if self.fromCross.piece.side =='b':
             # action ='黑', self.fromCross.piece.name,'x坐标:',str(self.fromCross.bx),';y坐标',str(self.fromCross.by),'==》x坐标:',str(self.toCross.bx),';y坐标',str(self.toCross.by),self.label
-            str0 = '黑'
+
             str1 = self.fromCross.piece.name
             str2 = str(self.fromCross.bx)
             if self.fromCross.by == self.toCross.by:
@@ -71,10 +70,10 @@ class IAction:
                     str4 = str(self.fromCross.by - self.toCross.by)
                     if self.fromCross.piece.pieceId == 3 or self.fromCross.piece.pieceId == 4 or self.fromCross.piece.pieceId == 5:
                         str4 = str(self.toCross.bx)
-            action = str0 + str1 + str2 + str3 + str4
+            action = str1 + str2 + str3 + str4
         if self.fromCross.piece.side == 'r':
             # action ='红',self.fromCross.piece.name,'x坐标:',str(self.fromCross.rx),';y坐标'+str(self.fromCross.ry),'==》x坐标:',str(self.toCross.rx),';y坐标',str(self.toCross.ry),self.label
-            str0 = '红'
+
             str1 = self.fromCross.piece.name
             str2 = str(self.fromCross.rx)
             if self.fromCross.ry == self.toCross.ry:
@@ -91,7 +90,7 @@ class IAction:
                     str4 = str(self.toCross.ry - self.fromCross.ry)
                     if self.fromCross.piece.pieceId == 3 or self.fromCross.piece.pieceId == 4 or self.fromCross.piece.pieceId == 5:
                         str4 = str(self.toCross.rx)
-            action = str0 + str1 + str2 + str3 + str4
+            action =  str1 + str2 + str3 + str4
         return action
 class ICross:
     def __init__(self,rx,ry,bx,by,piece,value):
@@ -635,9 +634,9 @@ class IBoard:
     def takeAction(self):
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
-            print(self.player,'输了')
+            return self.player+'输'
         if self.unkill_count >= 121:
-            print(self.player,'和棋')
+            return '和'
         else:
             action = choice(actionList)
             eatAction = []
@@ -746,8 +745,8 @@ if __name__ == '__main__':
                     strtmp = "口"
                     print(mat.format(strtmp=strtmp, len=5), end="")
 
-        myboard.takeAction()
-
+        if myboard.takeAction() == '和':
+            break
 
 
 
