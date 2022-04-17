@@ -235,6 +235,19 @@ class IBoard:
         #         else:
         #             print("——",end="")
     # 工具方法，根据坐标返回相应的交叉点
+    def strQ2B(self,ustring):
+        """全角转半角"""
+        rstring = ""
+        for uchar in ustring:
+            inside_code = ord(uchar)
+            # print(inside_code)
+            if inside_code == 12288:  # 全角空格直接转换
+                inside_code = 32
+            elif 65281 <= inside_code <= 65374:  # 全角字符（除空格）根据关系转化
+                inside_code -= 65248
+
+            rstring += chr(inside_code)
+        return rstring
     def getCrossByCoordinate(self,x,y,side):
         if side == 'b':
             for cross in self.crosses:
@@ -621,56 +634,44 @@ class IBoard:
                     action.label.append('check')
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-        #长捉限定--待验证
+        #长捉限定
         for action in valideActionList:
-            if self.player == 'b' and self.catch_count_b < 8 or ('catch' not in action.label or 'check' not in action.label):
+            if self.player == 'b' and (self.catch_count_b < 8 or ('catch' not in action.label or 'check' not in action.label)):
                 valideActionList_final.append(action)
-            if self.player == 'r' and self.catch_count_r < 8 or ('catch' not in action.label or 'check' not in action.label):
+            if self.player == 'r' and (self.catch_count_r < 8 or ('catch' not in action.label or 'check' not in action.label)):
                 valideActionList_final.append(action)
         return   valideActionList_final
 
 
 
-    def takeAction(self):
+    def takeAction(self,actionName):
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
             return self.player+'输'
         if self.unkill_count >= 121:
             return '和'
         else:
-            action = choice(actionList)
-            eatAction = []
-            catchAction = []
+            actionTaken = None
             for action in actionList:
-                if 'eat' in action.label :
-                    eatAction.append(action)
-            for action in actionList:
-                if 'catch' in action.label :
-                    catchAction.append(action)
-
-            if catchAction != None and len(catchAction)>0:
-                action = choice(catchAction)
-            if eatAction != None and len(eatAction)>0:
-                action = choice(eatAction)
-            print('############################################################')
-            print('############################################################')
-            print(action.getActionName(), action.label)
-            action.toCross.piece = action.fromCross.piece
-            action.fromCross.piece = None
+                if self.strQ2B(action.getActionName()) == self.strQ2B(actionName):
+                    actionTaken = action
+            print(actionTaken.getActionName(), actionTaken.label)
+            actionTaken.toCross.piece = actionTaken.fromCross.piece
+            actionTaken.fromCross.piece = None
             if self.player == 'r':
                 self.player = 'b'
             else:
                 self.player = 'r'
-            if 'catch' in action.label or 'check' in action.label:
+            if 'catch' in actionTaken.label or 'check' in actionTaken.label:
                 self.catch_count_b += 1
             else:
                 self.catch_count_b = 0
-            if 'eat' not in action.label:
+            if 'eat' not in actionTaken.label:
                 self.unkill_count += 1
             else:
                 self.unkill_count = 0
 
-    def getnp(self):
+    def getNp(self):
         crossList = []
         for cross in self.crosses:
             if (cross.piece != None):
@@ -681,7 +682,8 @@ class IBoard:
             else:
                 crossList.append(0)
         return crossList
-    def getnpList(self):
+
+    def getNpList(self):
         boardList = []
         valideActionList_final = self.chessAction()
         for action in valideActionList_final:
@@ -699,7 +701,7 @@ class IBoard:
                 else:
                     crossList.append(0)
             crossList_tmp = copy.deepcopy(crossList)
-            boardList.append(crossList)
+            boardList.append(crossList_tmp)
             crossList.clear()
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
@@ -714,39 +716,43 @@ class IBoard:
 
 if __name__ == '__main__':
     myboard = IBoard()
-    mat = "{strtmp: ^{len}}"
-    while 1 == 1:
-        actionList = myboard.chessAction()
-        if actionList == None or len(actionList) < 1:
-            print(myboard.player, '输了')
-            break
-        if myboard.unkill_count >= 121:
-            print(myboard.player, '和棋')
-            break
-        for cross in myboard.crosses:
-            if (cross.rx % 9 == 0):
-                if (cross.piece != None):
-                    strtmp = cross.piece.name
-                    if cross.piece.side == 'r':
-                        print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-                    else:
-                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-                else:
-                    strtmp = "口"
-                    print(mat.format(strtmp=strtmp,len=5))
-            else:
-                if (cross.piece != None):
-                    strtmp = cross.piece.name
-                    if cross.piece.side == 'r':
-                        print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
-                    else:
-                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
-                else:
-                    strtmp = "口"
-                    print(mat.format(strtmp=strtmp, len=5), end="")
-
-        if myboard.takeAction() == '和':
-            break
+    # print(len(myboard.chessAction()))
+    for action in myboard.chessAction():
+        print(action.getActionName())
+    print(myboard.getNpList())
+    # mat = "{strtmp: ^{len}}"
+    # while 1 == 1:
+    #     actionList = myboard.chessAction()
+    #     if actionList == None or len(actionList) < 1:
+    #         print(myboard.player, '输了')
+    #         break
+    #     if myboard.unkill_count >= 121:
+    #         print(myboard.player, '和棋')
+    #         break
+    #     for cross in myboard.crosses:
+    #         if (cross.rx % 9 == 0):
+    #             if (cross.piece != None):
+    #                 strtmp = cross.piece.name
+    #                 if cross.piece.side == 'r':
+    #                     print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+    #                 else:
+    #                     print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+    #             else:
+    #                 strtmp = "口"
+    #                 print(mat.format(strtmp=strtmp,len=5))
+    #         else:
+    #             if (cross.piece != None):
+    #                 strtmp = cross.piece.name
+    #                 if cross.piece.side == 'r':
+    #                     print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
+    #                 else:
+    #                     print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
+    #             else:
+    #                 strtmp = "口"
+    #                 print(mat.format(strtmp=strtmp, len=5), end="")
+    #
+    #     if myboard.takeAction() == '和':
+    #         break
 
 
 
