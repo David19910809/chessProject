@@ -670,6 +670,28 @@ class IBoard:
                 self.unkill_count += 1
             else:
                 self.unkill_count = 0
+        mat = "{strtmp: ^{len}}"
+        for cross in myboard.crosses:
+            if (cross.rx % 9 == 0):
+                if (cross.piece != None):
+                    strtmp = cross.piece.name
+                    if cross.piece.side == 'r':
+                        print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+                    else:
+                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+                else:
+                    strtmp = "口"
+                    print(mat.format(strtmp=strtmp,len=5))
+            else:
+                if (cross.piece != None):
+                    strtmp = cross.piece.name
+                    if cross.piece.side == 'r':
+                        print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
+                    else:
+                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
+                else:
+                    strtmp = "口"
+                    print(mat.format(strtmp=strtmp, len=5), end="")
 
     def getNp(self):
         crossList = []
@@ -711,54 +733,94 @@ class IBoard:
 
         return boardList
 
-    # def simulateGame(self):
-    #     while 1 == 1:
+    def printBoard(self,y):
+        # y = np.array([0.1,0.5,0.8,-0.4,1.1,1.8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+        # y = self.getNp()
+        # y = np.array(y)
+        # y = y.reshape((1, 10, 9))
+        # y = y.T
+        # y = np.rot90(y,1)
+       #########################
+        y = np.rot90(y, -1)
+        y = y.T
+        y = y.reshape((90))
+        y = np.asarray(y)
+        y = np.rint(y)
+        #print(y)
+
+        mat = "{strtmp: ^{len}}"
+        flag = 1
+        for i in y:
+            if (flag % 9 == 0):
+                if (i == 1):
+                    print("\033[0;37;41m" + mat.format(strtmp='车', len=5) + "\033[0m")
+                if (i == 2):
+                    print("\033[0;37;41m" + mat.format(strtmp='炮', len=5) + "\033[0m")
+                if (i == 3):
+                    print("\033[0;37;41m" + mat.format(strtmp='马', len=5) + "\033[0m")
+                if (i == 4):
+                    print("\033[0;37;41m" + mat.format(strtmp='相', len=5) + "\033[0m")
+                if (i == 5):
+                    print("\033[0;37;41m" + mat.format(strtmp='士', len=5) + "\033[0m")
+                if (i == 6):
+                    print("\033[0;37;41m" + mat.format(strtmp='将', len=5) + "\033[0m")
+                if (i == 7):
+                    print("\033[0;37;41m" + mat.format(strtmp='兵', len=5) + "\033[0m")
+                if (i == -1):
+                    print("\033[0;37;43m" + mat.format(strtmp='车', len=5) + "\033[0m")
+                if (i == -2):
+                    print("\033[0;37;43m" + mat.format(strtmp='炮', len=5) + "\033[0m")
+                if (i == -3):
+                    print("\033[0;37;43m" + mat.format(strtmp='马', len=5) + "\033[0m")
+                if (i == -4):
+                    print("\033[0;37;43m" + mat.format(strtmp='相', len=5) + "\033[0m")
+                if (i == -5):
+                    print("\033[0;37;43m" + mat.format(strtmp='士', len=5) + "\033[0m")
+                if (i == -6):
+                    print("\033[0;37;43m" + mat.format(strtmp='将', len=5) + "\033[0m")
+                if (i == -7):
+                    print("\033[0;37;43m" + mat.format(strtmp='兵', len=5) + "\033[0m")
+                if (i == 0):
+                    print( mat.format(strtmp='口', len=5))
+            else:
+                if (i == 1):
+                    print("\033[0;37;41m" + mat.format(strtmp='车', len=5) + "\033[0m",end = "")
+                if (i == 2):
+                    print("\033[0;37;41m" + mat.format(strtmp='炮', len=5) + "\033[0m",end = "")
+                if (i == 3):
+                    print("\033[0;37;41m" + mat.format(strtmp='马', len=5) + "\033[0m",end = "")
+                if (i == 4):
+                    print("\033[0;37;41m" + mat.format(strtmp='相', len=5) + "\033[0m",end = "")
+                if (i == 5):
+                    print("\033[0;37;41m" + mat.format(strtmp='士', len=5) + "\033[0m",end = "")
+                if (i == 6):
+                    print("\033[0;37;41m" + mat.format(strtmp='将', len=5) + "\033[0m",end = "")
+                if (i == 7):
+                    print("\033[0;37;41m" + mat.format(strtmp='兵', len=5) + "\033[0m",end = "")
+                if (i == -1):
+                    print("\033[0;37;43m" + mat.format(strtmp='车', len=5) + "\033[0m",end = "")
+                if (i == -2):
+                    print("\033[0;37;43m" + mat.format(strtmp='炮', len=5) + "\033[0m",end = "")
+                if (i == -3):
+                    print("\033[0;37;43m" + mat.format(strtmp='马', len=5) + "\033[0m",end = "")
+                if (i == -4):
+                    print("\033[0;37;43m" + mat.format(strtmp='相', len=5) + "\033[0m",end = "")
+                if (i == -5):
+                    print("\033[0;37;43m" + mat.format(strtmp='士', len=5) + "\033[0m",end = "")
+                if (i == -6):
+                    print("\033[0;37;43m" + mat.format(strtmp='将', len=5) + "\033[0m",end = "")
+                if (i == -7):
+                    print("\033[0;37;43m" + mat.format(strtmp='兵', len=5) + "\033[0m",end = "")
+                if (i == 0):
+                    print(mat.format(strtmp='口', len=5),end = "")
+            flag += 1
+
+
 
 if __name__ == '__main__':
     myboard = IBoard()
-    # print(len(myboard.chessAction()))
-    for action in myboard.chessAction():
-        print(action.getActionName())
-    print(myboard.getNpList())
-    # mat = "{strtmp: ^{len}}"
-    # while 1 == 1:
-    #     actionList = myboard.chessAction()
-    #     if actionList == None or len(actionList) < 1:
-    #         print(myboard.player, '输了')
-    #         break
-    #     if myboard.unkill_count >= 121:
-    #         print(myboard.player, '和棋')
-    #         break
-    #     for cross in myboard.crosses:
-    #         if (cross.rx % 9 == 0):
-    #             if (cross.piece != None):
-    #                 strtmp = cross.piece.name
-    #                 if cross.piece.side == 'r':
-    #                     print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-    #                 else:
-    #                     print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-    #             else:
-    #                 strtmp = "口"
-    #                 print(mat.format(strtmp=strtmp,len=5))
-    #         else:
-    #             if (cross.piece != None):
-    #                 strtmp = cross.piece.name
-    #                 if cross.piece.side == 'r':
-    #                     print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
-    #                 else:
-    #                     print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
-    #             else:
-    #                 strtmp = "口"
-    #                 print(mat.format(strtmp=strtmp, len=5), end="")
-    #
-    #     if myboard.takeAction() == '和':
-    #         break
+    myboard.takeAction('炮2平5')
 
-
-
-
-
-   # myboard.sovleActionLabel(actionList)
 
 
 
