@@ -85,7 +85,7 @@ for filename in os.listdir(r'C://Users//user1//Desktop//all'):
         x = np.rot90(x,1)
         y = y.T
         y = np.rot90(y,1)
-        model.fit(x, y, epochs=1)
+        model.fit(x, y, epochs=10)
 #训练模型
 
 model.save('C://model', overwrite=True, include_optimizer=True )

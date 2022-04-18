@@ -671,7 +671,7 @@ class IBoard:
             else:
                 self.unkill_count = 0
         mat = "{strtmp: ^{len}}"
-        for cross in myboard.crosses:
+        for cross in self.crosses:
             if (cross.rx % 9 == 0):
                 if (cross.piece != None):
                     strtmp = cross.piece.name
