@@ -25,12 +25,11 @@ def strQ2B(ustring):
     return rstring
 #神经网络
 inputs = keras.Input(shape=(9,50))
-x = keras.layers.Dense(900, activation="relu", name="dense_1")(inputs)
-x = keras.layers.Dense(900, activation="relu", name="dense_2")(x)
+x = keras.layers.Dense(4500, activation="relu", name="dense_1")(inputs)
+x = keras.layers.Dense(2250, activation="relu", name="dense_2")(x)
 x = keras.layers.Dense(900, activation="relu", name="dense_3")(x)
-x = keras.layers.Dense(900, activation="relu", name="dense_4")(x)
-x = keras.layers.Dense(900, activation="relu", name="dense_5")(x)
-x = keras.layers.Dense(900, activation="relu", name="dense_6")(x)
+x = keras.layers.Dense(450, activation="relu", name="dense_4")(x)
+x = keras.layers.Dense(180, activation="relu", name="dense_5")(x)
 outputs = keras.layers.Dense(1, name="predictions")(x)
 model = keras.Model(inputs, outputs)
 model.compile(optimizer="adam", loss="mse", metrics=["mae"])
@@ -53,12 +52,13 @@ model.summary()
 # print(y.shape)
 #iboard = IBoard()
 actionReader = actionReader()
-timeEnd = datetime(2022, 4, 18, 8, 28, 58, 186250)
-for filename in os.listdir(r'C://Users//Lucky//Desktop//all'):
+timeEnd = datetime(2022, 4, 21, 18, 18, 1, 186250)
+for filename in os.listdir(r'C://Users//user1//Desktop//all'):
     time = datetime.now()
+    print(time > timeEnd)
     if time>timeEnd:
         break
-    file = open('C://Users//Lucky//Desktop//all//'+filename)
+    file = open('C://Users//user1//Desktop//all//'+filename)
     actionList = actionReader.getActionList(file)
     iboard = IBoard()
     for action in actionList:
