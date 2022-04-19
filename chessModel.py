@@ -24,10 +24,10 @@ def strQ2B(ustring):
         rstring += chr(inside_code)
     return rstring
 #神经网络
-inputs = keras.Input(shape=(9,50))
-x = keras.layers.Dense(4500, activation="relu", name="dense_1")(inputs)
-x = keras.layers.Dense(2250, activation="relu", name="dense_2")(x)
-x = keras.layers.Dense(900, activation="relu", name="dense_3")(x)
+inputs = keras.Input(shape=(9,70))
+x = keras.layers.Dense(6300, activation="relu", name="dense_1")(inputs)
+x = keras.layers.Dense(3150, activation="relu", name="dense_2")(x)
+x = keras.layers.Dense(1620, activation="relu", name="dense_3")(x)
 x = keras.layers.Dense(450, activation="relu", name="dense_4")(x)
 x = keras.layers.Dense(180, activation="relu", name="dense_5")(x)
 outputs = keras.layers.Dense(1, name="predictions")(x)
@@ -53,27 +53,28 @@ model.summary()
 #iboard = IBoard()
 actionReader = actionReader()
 timeEnd = datetime(2022, 4, 21, 18, 18, 1, 186250)
-for filename in os.listdir(r'C://Users//user1//Desktop//all'):
+for filename in os.listdir(r'C://Users//Lucky//Desktop//all'):
     time = datetime.now()
     print(time > timeEnd)
     if time>timeEnd:
         break
-    file = open('C://Users//user1//Desktop//all//'+filename)
+    file = open('C://Users//Lucky//Desktop//all//'+filename)
     actionList = actionReader.getActionList(file)
     iboard = IBoard()
     for action in actionList:
         try:
             x = iboard.getNpList()
             x = np.array(x)
-            x = x.reshape((1, 4500))
-            x = x.reshape((50, 10, 9))
+            x = x.reshape((1, 6300))
+            x = x.reshape((70, 10, 9))
 
         except ValueError:
+            print(ValueError)
             break
         boardChessActionList = iboard.chessAction()
         flag = 'false'
         for boardAction in boardChessActionList:
-            if strQ2B(boardAction.getActionName()) == strQ2B(action):
+            if strQ2B(boardAction.name) == strQ2B(action):
                 flag = 'true'
         if flag == 'false':
             break
@@ -86,7 +87,7 @@ for filename in os.listdir(r'C://Users//user1//Desktop//all'):
         x = np.rot90(x,1)
         y = y.T
         y = np.rot90(y,1)
-        model.fit(x, y, epochs=10)
+        model.fit(x, y, epochs=1)
 #训练模型
 
 model.save('C://model', overwrite=True, include_optimizer=True )

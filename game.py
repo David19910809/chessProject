@@ -10,6 +10,18 @@ model = load_model('C://model')
 test = IBoard()
 test.takeAction('炮2平5')
 test.takeAction('炮2平5')
+test.takeAction('马2进3')
+test.takeAction('马2进3')
+
+test.takeAction('车1平2')
+test.takeAction('车1进1')
+
+test.takeAction('车2进7')
+test.takeAction('车1平6')
+
+test.takeAction('车2进2')
+test.takeAction('车6进3')
+
 # test.takeAction('炮2平5')
 x = test.getNpList()
 x = np.array(x)

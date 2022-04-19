@@ -640,6 +640,14 @@ class IBoard:
                 valideActionList_final.append(action)
             if self.player == 'r' and (self.catch_count_r < 8 or ('catch' not in action.label or 'check' not in action.label)):
                 valideActionList_final.append(action)
+        #棋谱前后解决
+        for action in valideActionList_final:
+            for ac in valideActionList_final:
+                if ac.fromCross.piece.pieceId == action.fromCross.piece.pieceId and ac.fromCross != action.fromCross and ac.fromCross.rx == action.fromCross.rx:
+                    if (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='b'):
+                        ac.name = '前'+ac.fromCross.piece.name+ac.name[2:3]
+                    if (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='b'):
+                        ac.name = '后'+ac.fromCross.piece.name+ac.name[2:3]
         return   valideActionList_final
 
 
@@ -727,8 +735,8 @@ class IBoard:
             crossList.clear()
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-        if len(boardList)<50:
-            while 50 - len(boardList) > 0:
+        if len(boardList)<70:
+            while 70 - len(boardList) > 0:
                 boardList.append([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 
         return boardList

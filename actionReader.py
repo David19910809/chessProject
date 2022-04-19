@@ -20,6 +20,7 @@ class actionReader:
                 line = line.replace('九', '9')
                 line = line.replace('卒', '兵')
                 line = line.replace('象', '相')
+                line = line.replace('帅', '将')
                 result = re.search(pattern, line)  # 以pattern的值 分割字符串
                 if result != None and len(line.split()) == 3:
                     arra = line.split()
