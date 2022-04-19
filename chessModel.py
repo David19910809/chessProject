@@ -53,15 +53,17 @@ model.summary()
 #iboard = IBoard()
 actionReader = actionReader()
 timeEnd = datetime(2022, 4, 21, 18, 18, 1, 186250)
-for filename in os.listdir(r'C://Users//Lucky//Desktop//all'):
+for filename in os.listdir(r'C://Users//Lucky//Desktop//test'):
     time = datetime.now()
     print(time > timeEnd)
     if time>timeEnd:
         break
-    file = open('C://Users//Lucky//Desktop//all//'+filename)
+    file = open('C://Users//Lucky//Desktop//test//'+filename)
     actionList = actionReader.getActionList(file)
     iboard = IBoard()
     for action in actionList:
+        print('action')
+        print(action)
         try:
             x = iboard.getNpList()
             x = np.array(x)
@@ -77,6 +79,9 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//all'):
             if strQ2B(boardAction.name) == strQ2B(action):
                 flag = 'true'
         if flag == 'false':
+            print('行动非法')
+            for action1 in boardChessActionList:
+                print(action1.name)
             break
         iboard.takeAction(action)
         y = iboard.getNp()

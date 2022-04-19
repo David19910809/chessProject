@@ -84,7 +84,7 @@ class IAction:
                     str3 = '退'
                     str4 = str(self.fromCross.ry - self.toCross.ry)
                     if self.fromCross.piece.pieceId == 3 or self.fromCross.piece.pieceId == 4 or self.fromCross.piece.pieceId == 5:
-                        str4 = str(self.toCross.bx)
+                        str4 = str(self.toCross.rx)
                 if self.fromCross.ry < self.toCross.ry:
                     str3 = '进'
                     str4 = str(self.toCross.ry - self.fromCross.ry)
@@ -641,27 +641,33 @@ class IBoard:
             if self.player == 'r' and (self.catch_count_r < 8 or ('catch' not in action.label or 'check' not in action.label)):
                 valideActionList_final.append(action)
         #棋谱前后解决
-        for action in valideActionList_final:
-            for ac in valideActionList_final:
-                if ac.fromCross.piece.pieceId == action.fromCross.piece.pieceId and ac.fromCross != action.fromCross and ac.fromCross.rx == action.fromCross.rx:
-                    if (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='b'):
-                        ac.name = '前'+ac.fromCross.piece.name+ac.name[2:3]
-                    if (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='b'):
-                        ac.name = '后'+ac.fromCross.piece.name+ac.name[2:3]
+
+        for ac in valideActionList_final:
+            for cross in self.crosses:
+                if cross.piece != None and cross.piece.pieceId == ac.fromCross.piece.pieceId and cross.piece.pieceId !=4 and cross.piece.pieceId !=5 and cross.piece.side == ac.fromCross.piece.side and cross.rx == ac.fromCross.rx and cross.ry != ac.fromCross.ry:
+                    if (ac.fromCross.piece.side == 'r' and ac.fromCross.ry > cross.ry) or (ac.fromCross.piece.side == 'b' and ac.fromCross.ry < cross.ry):
+                        ac.name = '前' + ac.fromCross.piece.name + ac.name[2:4]
+                    if (ac.fromCross.piece.side == 'b' and ac.fromCross.ry > cross.ry) or (ac.fromCross.piece.side == 'r' and ac.fromCross.ry < cross.ry):
+                        ac.name = '后' + ac.fromCross.piece.name + ac.name[2:4]
+            # if ac.fromCross.piece.pieceId == action.fromCross.piece.pieceId and ac.fromCross != action.fromCross and ac.fromCross.rx == action.fromCross.rx:
+            #     if (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='b'):
+            #         ac.name = '前'+ac.fromCross.piece.name+ac.name[2:4]
+            #     if (ac.fromCross.ry < action.fromCross.ry and ac.fromCross.piece.side =='r') or (ac.fromCross.ry > action.fromCross.ry and ac.fromCross.piece.side =='b'):
+            #         ac.name = '后'+ac.fromCross.piece.name+ac.name[2:4]
+
         return   valideActionList_final
-
-
 
     def takeAction(self,actionName):
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
             return self.player+'输'
         if self.unkill_count >= 121:
+            print('和')
             return '和'
         else:
             actionTaken = None
             for action in actionList:
-                if self.strQ2B(action.getActionName()) == self.strQ2B(actionName):
+                if self.strQ2B(action.name) == self.strQ2B(actionName):
                     actionTaken = action
             print(actionTaken.getActionName(), actionTaken.label)
             actionTaken.toCross.piece = actionTaken.fromCross.piece
