@@ -9,6 +9,8 @@ from keras.models import load_model
 model = load_model('C://model')
 test = IBoard()
 test.takeAction('炮2平5')
+test.takeAction('炮2平5')
+# test.takeAction('炮2平5')
 x = test.getNpList()
 x = np.array(x)
 x = x.reshape((1, 4500))

@@ -67,9 +67,7 @@ for filename in os.listdir(r'C://Users//user1//Desktop//all'):
             x = np.array(x)
             x = x.reshape((1, 4500))
             x = x.reshape((50, 10, 9))
-            y = iboard.getNp()
-            y = np.array(y)
-            y = y.reshape((1, 10, 9))
+
         except ValueError:
             break
         boardChessActionList = iboard.chessAction()
@@ -80,6 +78,9 @@ for filename in os.listdir(r'C://Users//user1//Desktop//all'):
         if flag == 'false':
             break
         iboard.takeAction(action)
+        y = iboard.getNp()
+        y = np.array(y)
+        y = y.reshape((1, 10, 9))
         # 棋盘矩阵转置 旋转
         x = x.T
         x = np.rot90(x,1)
