@@ -10,29 +10,28 @@ model = load_model('C://model')
 test = IBoard()
 test.takeAction('炮2平5')
 test.takeAction('炮2平5')
-test.takeAction('马2进3')
-test.takeAction('马2进3')
-
-test.takeAction('车1平2')
-test.takeAction('车1进1')
-
-test.takeAction('车2进7')
-test.takeAction('车1平6')
-
-test.takeAction('车2进2')
-test.takeAction('车6进3')
+# test.takeAction('马2进3')
+# test.takeAction('马2进3')
+#
+# test.takeAction('车1平2')
+# test.takeAction('车1进1')
+#
+# test.takeAction('车2进7')
+# test.takeAction('车1平6')
+#
+# test.takeAction('车2进2')
+# test.takeAction('车6进3')
 
 # test.takeAction('炮2平5')
 x = test.getNpList()
 x = np.array(x)
-x = x.reshape((1, 4500))
-x = x.reshape((50, 10, 9))
+x = x.reshape((1, 6300))
+x = x.reshape((70, 10, 9))
 x = x.T
 x = np.rot90(x,1)
 y = model(x)
 test.printBoard(y)
 y = np.rot90(y, -1)
 y = y.T
-y = np.rint(y)
-
+# y = np.rint(y)
 print(y)

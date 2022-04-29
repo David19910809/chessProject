@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 from board import IBoard
 from actionReader import actionReader
+from keras import metrics
 # iboard = IBoard()
 # boardTarget = np.array(iboard.getnp())
 # boardTarget = boardTarget.reshape((10,9))
@@ -24,7 +25,7 @@ def strQ2B(ustring):
         rstring += chr(inside_code)
     return rstring
 #神经网络
-inputs = keras.Input(shape=(9,70))
+inputs = keras.Input(shape=(9,70),dtype = tf.int8)
 x = keras.layers.Dense(6300, activation="relu", name="dense_1")(inputs)
 x = keras.layers.Dense(3150, activation="relu", name="dense_2")(x)
 x = keras.layers.Dense(1620, activation="relu", name="dense_3")(x)
@@ -32,7 +33,9 @@ x = keras.layers.Dense(450, activation="relu", name="dense_4")(x)
 x = keras.layers.Dense(180, activation="relu", name="dense_5")(x)
 outputs = keras.layers.Dense(1, name="predictions")(x)
 model = keras.Model(inputs, outputs)
-model.compile(optimizer="adam", loss="mse", metrics=["mae"])
+model.compile(optimizer="adam", loss="mae", metrics=[metrics.mae, metrics.binary_accuracy])
+for layer in model.layers:
+        layer.trainable = False
 # We don't passs a loss or metrics here.
 #模型结构预览
 model.summary()
@@ -56,14 +59,12 @@ timeEnd = datetime(2022, 4, 21, 18, 18, 1, 186250)
 for filename in os.listdir(r'C://Users//Lucky//Desktop//test'):
     time = datetime.now()
     print(time > timeEnd)
-    if time>timeEnd:
-        break
+    # if time>timeEnd:
+    #     break
     file = open('C://Users//Lucky//Desktop//test//'+filename)
     actionList = actionReader.getActionList(file)
     iboard = IBoard()
     for action in actionList:
-        print('action')
-        print(action)
         try:
             x = iboard.getNpList()
             x = np.array(x)
@@ -71,6 +72,7 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//test'):
             x = x.reshape((70, 10, 9))
 
         except ValueError:
+            print(x.shape)
             print(ValueError)
             break
         boardChessActionList = iboard.chessAction()
@@ -96,6 +98,8 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//test'):
 #训练模型
 
 model.save('C://model', overwrite=True, include_optimizer=True )
+y = model(x)
+print(y)
 
 
 

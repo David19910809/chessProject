@@ -684,66 +684,98 @@ class IBoard:
                 self.unkill_count += 1
             else:
                 self.unkill_count = 0
-        mat = "{strtmp: ^{len}}"
-        for cross in self.crosses:
-            if (cross.rx % 9 == 0):
-                if (cross.piece != None):
-                    strtmp = cross.piece.name
-                    if cross.piece.side == 'r':
-                        print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-                    else:
-                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
-                else:
-                    strtmp = "口"
-                    print(mat.format(strtmp=strtmp,len=5))
+        # mat = "{strtmp: ^{len}}"
+        # for cross in self.crosses:
+        #     if (cross.rx % 9 == 0):
+        #         if (cross.piece != None):
+        #             strtmp = cross.piece.name
+        #             if cross.piece.side == 'r':
+        #                 print("\033[0;37;41m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+        #             else:
+        #                 print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m")
+        #         else:
+        #             strtmp = "口"
+        #             print(mat.format(strtmp=strtmp,len=5))
+        #     else:
+        #         if (cross.piece != None):
+        #             strtmp = cross.piece.name
+        #             if cross.piece.side == 'r':
+        #                 print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
+        #             else:
+        #                 print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
+        #         else:
+        #             strtmp = "口"
+        #             print(mat.format(strtmp=strtmp, len=5), end="")
+    def takeActionbyNp(self,np):
+        actionList = self.chessAction()
+        if actionList ==None or len(actionList) <1:
+            return self.player+'输'
+        if self.unkill_count >= 121:
+            print('和')
+            return '和'
+        else:
+            actionTaken = None
+            for action in actionList:
+                toCross_tmp = copy.deepcopy(action.toCross.piece)
+                fromCross_tmp = copy.deepcopy(action.fromCross.piece)
+                actionTaken.toCross.piece = actionTaken.fromCross.piece
+                actionTaken.fromCross.piece = None
+                if self.getNp() == np:
+                    actionTaken = action
+                action.toCross.piece = copy.deepcopy(toCross_tmp)
+                action.fromCross.piece = copy.deepcopy(fromCross_tmp)
+            print(actionTaken.getActionName(), actionTaken.label)
+            actionTaken.toCross.piece = actionTaken.fromCross.piece
+            actionTaken.fromCross.piece = None
+            if self.player == 'r':
+                self.player = 'b'
             else:
-                if (cross.piece != None):
-                    strtmp = cross.piece.name
-                    if cross.piece.side == 'r':
-                        print("\033[0;37;41m"+mat.format(strtmp=strtmp,len=5)+"\033[0m", end="")
-                    else:
-                        print("\033[0;37;43m" + mat.format(strtmp=strtmp, len=5) + "\033[0m", end="")
-                else:
-                    strtmp = "口"
-                    print(mat.format(strtmp=strtmp, len=5), end="")
+                self.player = 'r'
+            if 'catch' in actionTaken.label or 'check' in actionTaken.label:
+                self.catch_count_b += 1
+            else:
+                self.catch_count_b = 0
+            if 'eat' not in actionTaken.label:
+                self.unkill_count += 1
+            else:
+                self.unkill_count = 0
+
 
     def getNp(self):
-        crossList = []
+        crossList = ''
         for cross in self.crosses:
             if (cross.piece != None):
                 if cross.piece.side == 'r':
-                    crossList.append(cross.piece.pieceId)
+                    crossList+=str(cross.piece.pieceId)
                 else:
-                    crossList.append(-cross.piece.pieceId)
+                    crossList+=('-'+str(cross.piece.pieceId))
             else:
-                crossList.append(0)
+                crossList+='0'
         return crossList
 
     def getNpList(self):
-        boardList = []
+        boardList = ''
         valideActionList_final = self.chessAction()
         for action in valideActionList_final:
             # 先在棋盘完成行动
             toCross_tmp = copy.deepcopy(action.toCross.piece)
             fromCross_tmp = copy.deepcopy(action.fromCross.piece)
-
-            crossList = []
+            action.toCross.piece = action.fromCross.piece
+            action.fromCross.piece = None
             for cross in self.crosses:
                 if (cross.piece != None):
                     if cross.piece.side == 'r':
-                        crossList.append(cross.piece.pieceId)
+                        boardList+=str(cross.piece.pieceId)
                     else:
-                        crossList.append(-cross.piece.pieceId)
+                        boardList += ('-'+str(cross.piece.pieceId))
                 else:
-                    crossList.append(0)
-            crossList_tmp = copy.deepcopy(crossList)
-            boardList.append(crossList_tmp)
-            crossList.clear()
+                    boardList+='0'
+            boardList+=','
             action.toCross.piece = copy.deepcopy(toCross_tmp)
             action.fromCross.piece = copy.deepcopy(fromCross_tmp)
-        if len(boardList)<70:
-            while 70 - len(boardList) > 0:
-                boardList.append([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+        # if len(boardList)<70:
+        #     while 70 - len(boardList) > 0:
+        #         boardList.append([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 
         return boardList
 
