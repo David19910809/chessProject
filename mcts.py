@@ -35,6 +35,7 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//chess2'):
         else:
             r.hset(np, 'value',20)
         r.hset(np,'search_count',0)
+        r.hset(np, 'is_expert', 'y')
         r.hset(np, 'c_node', npList)
         iboard.takeAction(action)
     flag_board+=1
