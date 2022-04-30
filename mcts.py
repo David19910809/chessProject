@@ -29,7 +29,7 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//chess2'):
             break
         np = iboard.getNp()
         np = np + iboard.player
-        npList = iboard.getNpList()
+        # npList = iboard.getNpList()
         value = r.hget(np,'value')
         if value != None:
             r.hset(np,'value',int(value)+2)
@@ -37,7 +37,7 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//chess2'):
             r.hset(np, 'value',20)
         r.hset(np,'search_count',0)
         r.hset(np, 'is_expert', 'y')
-        r.hset(np, 'c_node', npList)
+        # r.hset(np, 'c_node', npList)
         iboard.takeAction(action)
     flag_board+=1
     print('完成训练第'+str(flag_board)+'盘')

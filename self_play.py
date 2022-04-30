@@ -21,52 +21,41 @@ while 1==1:
     while result==None:
         np_board = myboard.getNp()
         np_board = np_board + myboard.player
-        move_str = r.hget(np_board,'c_node')
-        if move_str == None or move_str == '':
-            move_rec.append(myboard.getNp()+myboard.player)
-            r.hset(np_board, 'c_node', myboard.getNpList())
-            result = myboard.takeRandomAction()
+        move_str = myboard.getNpList()
+        if myboard.player == 'r':
+            other_side = 'b'
         else:
-            if myboard.player == 'r':
-                other_side = 'b'
+            other_side = 'r'
+        move_arra = move_str.split(',')
+        while '' in move_arra:
+            move_arra.remove('')
+        move_c = move_arra[0]
+        search_str_c = r.hget(move_c+other_side, 'search_count')
+        value_str_c = r.hget(move_c+other_side,'value')
+        if value_str_c != None:
+            value_c = int(value_str_c)
+        else:
+            value_c = 0
+        if search_str_c != None:
+            search_c = int(search_str_c)
+        else:
+            search_c = 0
+        for move_tmp in move_arra:
+            value_str = r.hget(move_tmp+other_side,'value')
+            search_str = r.hget(move_tmp + other_side, 'search_count')
+            if None == search_str:
+                search =0
             else:
-                other_side = 'r'
-            move_arra = move_str.split(',')
-            while '' in move_arra:
-                move_arra.remove('')
-            move_c = move_arra[0]
-            search_str_c = r.hget(move_c+other_side, 'search_count')
-            value_str_c = r.hget(move_c+other_side,'value')
-            if value_str_c != None:
-                value_c = int(value_str_c)
+                search= int(search_str)
+            if None != value_str:
+                value = int(value_str)
             else:
-                value_c = 0
-            if search_str_c != None:
-                search_c = int(search_str_c)
-            else:
-                search_c = 0
-            for move_tmp in move_arra:
-                value_str = r.hget(move_tmp+other_side,'value')
-                search_str = r.hget(move_tmp + other_side, 'search_count')
-                if None == search_str:
-                    search =0
-                else:
-                    search= int(search_str)
-                if None != value_str:
-                    value = int(value_str)
-                else:
-                    value = 0
-                if value-search > value_c-search_c:
-                    move_c = move_tmp
-                    value_c = value
+                value = 0
+            if value-search > value_c-search_c:
+                move_c = move_tmp
+                value_c = value
             move_rec.append(myboard.getNp()+myboard.player)
-            try:
-                result = myboard.takeActionbyNp(move_c)
-            except AttributeError:
-                while 1 == 1:
-                    print('kong')
-                    print(move_c)
-                break
+            result = myboard.takeActionbyNp(move_c)
     if result == 'r输':
         for arra in move_rec:
             # 检索次数更新
@@ -116,7 +105,7 @@ while 1==1:
                 if None == value_str:
                     r.hset(arra, 'value', '-1')
     if result == '和':
-        for arra in result:
+        for arra in move_rec:
             # 检索次数更新
             search_str = r.hget(arra, 'search_count')
             if None != search_str:
