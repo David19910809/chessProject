@@ -33,16 +33,28 @@ while 1==1:
                 other_side = 'r'
             move_arra = move_str.split(',')
             move_c = move_arra[0]
+            search_str_c = r.hget(move_c+other_side, 'search_count')
             value_str_c = r.hget(move_c+other_side,'value')
             if value_str_c != None:
                 value_c = int(value_str_c)
             else:
                 value_c = 0
+            if search_str_c != None:
+                search_c = int(search_str_c)
+            else:
+                search_c = 0
             for move_tmp in move_arra:
                 value_str = r.hget(move_tmp+other_side,'value')
+                search_str = r.hget(move_tmp + other_side, 'search_count')
+                if None == search_str:
+                    search =0
+                else:
+                    search= int(search_str)
                 if None != value_str:
                     value = int(value_str)
-                    if value > value_c:
+                else:
+                    value = 0
+                    if value-search > value_c-search_c:
                         move_c = move_tmp
                         value_c = value
             move_rec.append(myboard.getNp()+myboard.player)
