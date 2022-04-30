@@ -22,7 +22,7 @@ while 1==1:
         np_board = myboard.getNp()
         np_board = np_board + myboard.player
         move_str = r.hget(np_board,'c_node')
-        if move_str == None:
+        if move_str == None or move_str == '':
             move_rec.append(myboard.getNp()+myboard.player)
             r.hset(np_board, 'c_node', myboard.getNpList())
             result = myboard.takeRandomAction()
@@ -32,6 +32,8 @@ while 1==1:
             else:
                 other_side = 'r'
             move_arra = move_str.split(',')
+            while '' in move_arra:
+                move_arra.remove('')
             move_c = move_arra[0]
             search_str_c = r.hget(move_c+other_side, 'search_count')
             value_str_c = r.hget(move_c+other_side,'value')
@@ -58,69 +60,65 @@ while 1==1:
                     move_c = move_tmp
                     value_c = value
             move_rec.append(myboard.getNp()+myboard.player)
-            try:
-                result = myboard.takeActionbyNp(move_c)
-            except AttributeError:
-                while 1 == 1:
-                    print(move_c)
-                break
+            result = myboard.takeActionbyNp(move_c)
+
     if result == 'r输':
         for arra in move_rec:
             # 检索次数更新
             search_str = r.hget(arra, 'search_count')
             if None != search_str:
-                search = int(search_str) + 1
+                search = int(search_str) + 20
                 r.hset(arra, 'search_count', str(search))
             if None == search_str:
-                r.hset(arra, 'search_count', '1')
+                r.hset(arra, 'search_count', '20')
             # 价值更新
             if 'b' in arra:
                 value_str = r.hget(arra, 'value')
                 if None != value_str:
-                    value = int(value_str)-1
+                    value = int(value_str)-10
                     r.hset(arra, 'value',str(value))
                 if None == value_str:
-                    r.hset(arra, 'value', '-1')
+                    r.hset(arra, 'value', '-10')
             if 'r' in arra:
                 value_str = r.hget(arra, 'value')
                 if None != value_str:
-                    value = int(value_str)+1
+                    value = int(value_str)+10
                     r.hset(arra, 'value',str(value))
                 if None == value_str:
-                    r.hset(arra, 'value', '1')
+                    r.hset(arra, 'value', '10')
     if result == 'b输':
         for arra in move_rec:
             # 检索次数更新
             search_str = r.hget(arra, 'search_count')
             if None != search_str:
-                search = int(search_str) + 1
+                search = int(search_str) + 20
                 r.hset(arra, 'search_count', str(search))
             if None == search_str:
-                r.hset(arra, 'search_count', '1')
+                r.hset(arra, 'search_count', '20')
             # 价值更新
             if 'b' in arra:
                 value_str = r.hget(arra, 'value')
                 if None != value_str:
-                    value = int(value_str)+1
+                    value = int(value_str)+10
                     r.hset(arra, 'value',str(value))
                 if None == value_str:
-                    r.hset(arra, 'value', '1')
+                    r.hset(arra, 'value', '10')
             if 'r' in arra:
                 value_str = r.hget(arra, 'value')
                 if None != value_str:
-                    value = int(value_str)-1
+                    value = int(value_str)-10
                     r.hset(arra, 'value',str(value))
                 if None == value_str:
-                    r.hset(arra, 'value', '-1')
+                    r.hset(arra, 'value', '-10')
     if result == '和':
         for arra in result:
             # 检索次数更新
             search_str = r.hget(arra, 'search_count')
             if None != search_str:
-                search = int(search_str) + 1
+                search = int(search_str) + 20
                 r.hset(arra, 'search_count', str(search))
             if None == search_str:
-                r.hset(arra, 'search_count', '1')
+                r.hset(arra, 'search_count', '20')
         value_count = 0
         for cross in myboard.crosses:
             if cross.piece !=None:
@@ -152,37 +150,37 @@ while 1==1:
                     value_count -= 1000
                 if cross.piece.pieceId == 7 and cross.piece.side =='b':
                     value_count -= 1
-        if value_count>0:
+        if value_count>=3:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
                     value_str = r.hget(arra, 'value')
                     if None != value_str:
-                        value = int(value_str) + 1
+                        value = int(value_str) + 10
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
-                        r.hset(arra, 'value', '1')
+                        r.hset(arra, 'value', '10')
                 if 'r' in arra:
                     value_str = r.hget(arra, 'value')
                     if None != value_str:
-                        value = int(value_str) - 1
+                        value = int(value_str) - 10
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
-                        r.hset(arra, 'value', '-1')
-        if value_count<0:
+                        r.hset(arra, 'value', '-10')
+        if value_count<=-3:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
                     value_str = r.hget(arra, 'value')
                     if None != value_str:
-                        value = int(value_str) - 1
+                        value = int(value_str) - 10
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
-                        r.hset(arra, 'value', '-1')
+                        r.hset(arra, 'value', '-10')
                 if 'r' in arra:
                     value_str = r.hget(arra, 'value')
                     if None != value_str:
-                        value = int(value_str) + 1
+                        value = int(value_str) + 10
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
-                        r.hset(arra, 'value', '1')
+                        r.hset(arra, 'value', '10')

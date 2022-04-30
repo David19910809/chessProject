@@ -12,8 +12,8 @@ redis_info = {
 r = redis.Redis(**redis_info, decode_responses=True)
 actionReader = actionReader()
 flag_board = 1
-for filename in os.listdir(r'C://Users//Lucky//Desktop//chess2'):
-    file = open('C://Users//Lucky//Desktop//chess2//' + filename)
+for filename in os.listdir(r'C://chess'):
+    file = open('C://chess//' + filename)
     actionList = actionReader.getActionList(file)
     iboard = IBoard()
     for action in actionList:
