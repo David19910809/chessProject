@@ -60,13 +60,7 @@ while 1==1:
                     move_c = move_tmp
                     value_c = value
             move_rec.append(myboard.getNp()+myboard.player)
-            try:
-                result = myboard.takeActionbyNp(move_c)
-            except AttributeError:
-                while 1 == 1:
-                    print('kong')
-                    print(move_c)
-                break
+            result = myboard.takeActionbyNp(move_c)
     if result == 'r输':
         for arra in move_rec:
             # 检索次数更新
@@ -155,7 +149,7 @@ while 1==1:
                     value_count -= 1000
                 if cross.piece.pieceId == 7 and cross.piece.side =='b':
                     value_count -= 1
-        if value_count>0:
+        if value_count>=4:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
@@ -172,7 +166,7 @@ while 1==1:
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
                         r.hset(arra, 'value', '-1')
-        if value_count<0:
+        if value_count<=-4:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
