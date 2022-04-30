@@ -56,8 +56,6 @@ while 1==1:
                     value = int(value_str)
                 else:
                     value = 0
-                # print('目标flag')
-                # print(value_c-search_c)
                 if value-search > value_c-search_c:
                     move_c = move_tmp
                     value_c = value
@@ -113,7 +111,7 @@ while 1==1:
                 if None == value_str:
                     r.hset(arra, 'value', '-10')
     if result == '和':
-        for arra in move_rec:
+        for arra in result:
             # 检索次数更新
             search_str = r.hget(arra, 'search_count')
             if None != search_str:
