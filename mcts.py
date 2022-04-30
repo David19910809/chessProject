@@ -28,6 +28,7 @@ for filename in os.listdir(r'C://Users//Lucky//Desktop//chess2'):
                 print(action1.name)
             break
         np = iboard.getNp()
+        np = np + iboard.player
         npList = iboard.getNpList()
         value = r.hget(np,'value')
         if value != None:

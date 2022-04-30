@@ -657,11 +657,37 @@ class IBoard:
 
         return   valideActionList_final
 
-    def takeAction(self,actionName):
+    def takeRandomAction(self):
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
             return self.player+'输'
-        if self.unkill_count >= 121:
+        if self.unkill_count >= 61:
+            print('和')
+            return '和'
+        else:
+            actionTaken = None
+            actionTaken = choice(actionList)
+            print(actionTaken.getActionName(), actionTaken.label)
+            actionTaken.toCross.piece = actionTaken.fromCross.piece
+            actionTaken.fromCross.piece = None
+            if self.player == 'r':
+                self.player = 'b'
+            else:
+                self.player = 'r'
+            if 'catch' in actionTaken.label or 'check' in actionTaken.label:
+                self.catch_count_b += 1
+            else:
+                self.catch_count_b = 0
+            if 'eat' not in actionTaken.label:
+                self.unkill_count += 1
+            else:
+                self.unkill_count = 0
+
+    def takeAction(self, actionName):
+        actionList = self.chessAction()
+        if actionList == None or len(actionList) < 1:
+            return self.player + '输'
+        if self.unkill_count >= 61:
             print('和')
             return '和'
         else:
@@ -710,7 +736,7 @@ class IBoard:
         actionList = self.chessAction()
         if actionList ==None or len(actionList) <1:
             return self.player+'输'
-        if self.unkill_count >= 121:
+        if self.unkill_count >= 61:
             print('和')
             return '和'
         else:
