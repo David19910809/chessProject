@@ -54,9 +54,9 @@ while 1==1:
                     value = int(value_str)
                 else:
                     value = 0
-                    if value-search > value_c-search_c:
-                        move_c = move_tmp
-                        value_c = value
+                if value-search > value_c-search_c:
+                    move_c = move_tmp
+                    value_c = value
             move_rec.append(myboard.getNp()+myboard.player)
             result = myboard.takeActionbyNp(move_c)
     if result == 'r输':
