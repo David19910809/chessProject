@@ -22,7 +22,7 @@ while 1==1:
         np_board = myboard.getNp()
         np_board = np_board + myboard.player
         move_str = r.hget(np_board,'c_node')
-        if move_str == None or move_str == '':
+        if move_str == None:
             move_rec.append(myboard.getNp()+myboard.player)
             r.hset(np_board, 'c_node', myboard.getNpList())
             result = myboard.takeRandomAction()
@@ -32,8 +32,6 @@ while 1==1:
             else:
                 other_side = 'r'
             move_arra = move_str.split(',')
-            while '' in move_arra:
-                move_arra.remove('')
             move_c = move_arra[0]
             search_str_c = r.hget(move_c+other_side, 'search_count')
             value_str_c = r.hget(move_c+other_side,'value')
@@ -64,7 +62,6 @@ while 1==1:
                 result = myboard.takeActionbyNp(move_c)
             except AttributeError:
                 while 1 == 1:
-                    print('kong')
                     print(move_c)
                 break
     if result == 'r输':
