@@ -10,24 +10,14 @@ redis_info = {
     "port": 6379,
     "db": 0
 }
+
+
+def pickAction(iboard):
+    return None
 r = redis.Redis(**redis_info, decode_responses=True)
-str = input("Enter your side: ")
-print ("Received input is : ", str)
 myboard = IBoard()
 while 1==1:
-    if myboard.player == str:
-        move = input("Enter your move: ")
-        print("Received input is : ", move)
-        boardChessActionList = myboard.chessAction()
-        flag = 'false'
-        for boardAction in boardChessActionList:
-            if boardAction.name == move:
-                flag = 'true'
-        if flag == 'false':
-            print('行动非法')
-            print(move)
-        myboard.takeAction(move)
-    else:
+    myboard = IBoard()
         print('电脑预测......')
         np_board = myboard.getNp()
         move_str = r.hget(np_board,'c_node')

@@ -11,19 +11,6 @@ from keras import metrics
 # boardTarget = boardTarget.reshape((10,9))
 # print(boardTarget)
 # Construct an instance of CustomModel
-def strQ2B(ustring):
-    """全角转半角"""
-    rstring = ""
-    for uchar in ustring:
-        inside_code = ord(uchar)
-        # print(inside_code)
-        if inside_code == 12288:  # 全角空格直接转换
-            inside_code = 32
-        elif 65281 <= inside_code <= 65374:  # 全角字符（除空格）根据关系转化
-            inside_code -= 65248
-
-        rstring += chr(inside_code)
-    return rstring
 #神经网络
 inputs = keras.Input(shape=(9,70),dtype = tf.int8)
 x = keras.layers.Dense(6300, activation="relu", name="dense_1")(inputs)

@@ -718,8 +718,8 @@ class IBoard:
             for action in actionList:
                 toCross_tmp = copy.deepcopy(action.toCross.piece)
                 fromCross_tmp = copy.deepcopy(action.fromCross.piece)
-                actionTaken.toCross.piece = actionTaken.fromCross.piece
-                actionTaken.fromCross.piece = None
+                action.toCross.piece = action.fromCross.piece
+                action.fromCross.piece = None
                 if self.getNp() == np:
                     actionTaken = action
                 action.toCross.piece = copy.deepcopy(toCross_tmp)
