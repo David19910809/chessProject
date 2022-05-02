@@ -30,7 +30,7 @@ while 1==1:
     else:
         print('电脑预测......')
         np_board = myboard.getNp()
-        move_str = r.hget(np_board,'c_node')
+        move_str = r.hget(np_board+myboard.player,'c_node')
         if move_str == None:
             print('电脑认输')
             break

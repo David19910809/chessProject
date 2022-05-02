@@ -144,7 +144,7 @@ while 1==1:
                     value_count -= 1000
                 if cross.piece.pieceId == 7 and cross.piece.side =='b':
                     value_count -= 1
-        if value_count>0:
+        if value_count>3:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
@@ -161,7 +161,7 @@ while 1==1:
                         r.hset(arra, 'value', str(value))
                     if None == value_str:
                         r.hset(arra, 'value', '-1')
-        if value_count<0:
+        if value_count<3:
             for arra in move_rec:
                 # 价值更新
                 if 'b' in arra:
